@@ -6,6 +6,8 @@ Nombres fáciles de entender
 
 Clases comienzan por mayúsculas, funciones y variables por minúsculas
 
-Pere: Postgres, fichero
+Pereh: Postgres, fichero
+
 Ainara: mongo, db4o
+
 Rafa: Hibernate, main 
