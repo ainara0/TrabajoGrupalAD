@@ -1,6 +1,6 @@
 # TrabajoGrupalAD
 ## Reglas
-Código en inglés o bulgaro
+Código en inglés o búlgaro
 
 Nombres fáciles de entender
 
