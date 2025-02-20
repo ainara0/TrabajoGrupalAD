@@ -1,0 +1,5 @@
+-- Adaptado del anexo 7 del libro Acceso a datos con IntelliJ IDEA (2ª ed.) de José Ramón García Sevilla.
+-- departments: department(id,name,city).
+department(60,IT,SinCiudad)
+
+-- employees: employee(id,surname,job,department_id).
