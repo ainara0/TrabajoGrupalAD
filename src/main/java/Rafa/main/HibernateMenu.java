@@ -1,8 +1,10 @@
-package Rafa.hibernate;
+package Rafa.main;
+
+import Rafa.hibernate.*;
 
 import java.util.Scanner;
 
-public class Main {
+public class HibernateMenu {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         IDAO dao = new Rafa.hibernate.HibernateDAO();
