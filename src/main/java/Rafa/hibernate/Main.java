@@ -1,11 +1,11 @@
-package Hibernate;
+package Rafa.hibernate;
 
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        IDAO dao = new Hibernate.HibernateDAO();
+        IDAO dao = new Rafa.hibernate.HibernateDAO();
         int option;
 
         do {

@@ -1,4 +1,4 @@
-package Hibernate;
+package Rafa.hibernate;
 
 import jakarta.persistence.*;
 
@@ -19,7 +19,7 @@ public class Department {
     private String city;
 
     @OneToMany(mappedBy = "depno")
-    private Set<Hibernate.Employee> employees = new LinkedHashSet<>();
+    private Set<Rafa.hibernate.Employee> employees = new LinkedHashSet<>();
 
 
     public Integer getId() {
@@ -46,11 +46,11 @@ public class Department {
         this.city = location;
     }
 
-    public Set<Hibernate.Employee> getEmployees() {
+    public Set<Rafa.hibernate.Employee> getEmployees() {
         return employees;
     }
 
-    public void setEmployees(Set<Hibernate.Employee> employees) {
+    public void setEmployees(Set<Rafa.hibernate.Employee> employees) {
         this.employees = employees;
     }
 

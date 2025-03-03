@@ -10,7 +10,7 @@
         <!--  DB Password  -->
         <property name="hibernate.hbm2ddl.auto">update</property>
         <!--  create / create-drop / update  -->
-        <mapping class="org.example.Department"/>
-        <mapping class="org.example.Employee"/>
+        <mapping class="Pere.Department"/>
+        <mapping class="Pere.Employee"/>
     </session-factory>
 </hibernate-configuration>

@@ -1,4 +1,4 @@
-package Hibernate;
+package Rafa.hibernate;
 
 import java.util.List;
 

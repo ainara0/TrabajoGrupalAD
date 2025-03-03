@@ -1,7 +1,6 @@
-package org.example;
+package Pere;
 
 import java.io.*;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 

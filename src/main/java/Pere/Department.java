@@ -1,4 +1,4 @@
-package org.example;
+package Pere;
 
 public class Department {
     private int id;

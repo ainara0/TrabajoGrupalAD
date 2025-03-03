@@ -1,4 +1,4 @@
-package org.example;
+package Pere;
 
 import java.util.List;
 
