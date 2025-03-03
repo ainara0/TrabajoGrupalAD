@@ -1,0 +1,16 @@
+<hibernate-configuration>
+    <session-factory>
+        <property name="connection.url">jdbc:postgresql://localhost:5432/postgres</property>
+        <!--  BD Mane  -->
+        <property name="connection.driver_class">org.postgresql.Driver</property>
+        <!--  DB Driver  -->
+        <property name="connection.username">postgres</property>
+        <!--  DB User  -->
+        <property name="connection.password">12345</property>
+        <!--  DB Password  -->
+        <property name="hibernate.hbm2ddl.auto">update</property>
+        <!--  create / create-drop / update  -->
+        <mapping class="org.example.Department"/>
+        <mapping class="org.example.Employee"/>
+    </session-factory>
+</hibernate-configuration>

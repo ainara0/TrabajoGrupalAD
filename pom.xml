@@ -15,6 +15,12 @@
     </properties>
     <dependencies>
         <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>6.3.1.Final</version>
+        </dependency>
+        <!-- todo actualizar a una version mas reciente -->
+        <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>42.6.0</version> <!-- Asegúrate de usar la última versión disponible -->
