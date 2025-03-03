@@ -1,4 +1,4 @@
-package Pere;
+package Pere.jdbc;
 
 import java.sql.*;
 import java.util.ArrayList;

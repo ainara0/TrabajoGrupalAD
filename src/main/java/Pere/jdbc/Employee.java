@@ -1,4 +1,4 @@
-package Pere;
+package Pere.jdbc;
 
 public class Employee {
     private int id;

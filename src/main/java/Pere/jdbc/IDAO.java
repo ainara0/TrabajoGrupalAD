@@ -1,4 +1,4 @@
-package Pere;
+package Pere.jdbc;
 
 import java.util.List;
 
