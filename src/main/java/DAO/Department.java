@@ -1,19 +1,19 @@
-package Pere.jdbc;
+package DAO;
 
 public class Department {
     private int id;
     private String name;
+    private String location;
 
-    // Constructor vasio
-    public Department() {}
-
-    // Constructor con parmetros
-    public Department(int id, String name) {
-        this.id = id;
-        this.name = name;
+    public Department() {
     }
 
-    // get y set
+    public Department(int id, String name, String location) {
+        this.id = id;
+        this.name = name;
+        this.location = location;
+    }
+
     public int getId() {
         return id;
     }
@@ -30,11 +30,11 @@ public class Department {
         this.name = name;
     }
 
-    @Override
-    public String toString() {
-        return "Department{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 }

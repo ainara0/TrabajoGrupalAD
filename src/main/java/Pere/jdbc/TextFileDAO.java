@@ -1,5 +1,9 @@
 package Pere.jdbc;
 
+import DAO.Department;
+import DAO.Employee;
+import DAO.IDAO;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +45,9 @@ public class TextFileDAO implements IDAO {
                         if (parts.length >= 2) {
                             int id = Integer.parseInt(parts[0].trim());
                             String name = parts[1].trim();
+                            String city = parts[2].trim();
                             // Se ignora la ciudad (parts[2])
-                            departments.add(new Department(id, name));
+                            departments.add(new Department(id, name,city));
                         }
                     }
                 }
@@ -59,7 +64,7 @@ public class TextFileDAO implements IDAO {
                             String surname = parts[1].trim(); // Se mapea a firstName
                             String job = parts[2].trim();     // Se mapea a lastName
                             int depId = Integer.parseInt(parts[3].trim());
-                            employees.add(new Employee(id, surname, job, 0.0, depId));
+                            employees.add(new Employee(id, surname, job, depId));
                         }
                     }
                 }
@@ -82,7 +87,7 @@ public class TextFileDAO implements IDAO {
             pw.println(); // Línea en blanco
             pw.println("-- employees: employee(id,surname,job,department_id).");
             for (Employee e : employees) {
-                pw.println("employee(" + e.getId() + "," + e.getFirstName() + "," + e.getLastName() + "," + e.getDepartmentId() + ")");
+                pw.println("employee(" + e.getId() + "," + e.getName() + "," + e.getJob() + "," + e.getDeptId() + ")");
             }
             pw.flush();
         } catch (IOException e) {
@@ -90,7 +95,7 @@ public class TextFileDAO implements IDAO {
         }
     }
 
-    // Implementacion de los metodos de la interfaz IDAO para EMPLEADOS
+    // Implementacion de los metodos de la interfaz DAO.IDAO para EMPLEADOS
 
     @Override
     public List<Employee> findAllEmployees() {
@@ -113,19 +118,19 @@ public class TextFileDAO implements IDAO {
         // Comprobar que el departamento existe
         boolean deptExists = false;
         for (Department d : departments) {
-            if (d.getId() == employee.getDepartmentId()) {
+            if (d.getId() == employee.getDeptId()) {
                 deptExists = true;
                 break;
             }
         }
         if (!deptExists) {
-            System.out.println("No existe el departamento con id: " + employee.getDepartmentId());
+            System.out.println("No existe el departamento con id: " + employee.getDeptId());
             return;
         }
         employees.add(employee);
         saveData();
     }
-
+// todo solicitar al usuario que quiere cambiar y gestionarlo.
     @Override
     public Employee updateEmployee(Object id) {
         int empId = (int) id;
@@ -163,14 +168,14 @@ public class TextFileDAO implements IDAO {
         int depId = (int) idDept;
         List<Employee> result = new ArrayList<>();
         for (Employee e : employees) {
-            if (e.getDepartmentId() == depId) {
+            if (e.getDeptId() == depId) {
                 result.add(e);
             }
         }
         return result;
     }
 
-    // Implementasion de los métodos de la interfaz IDAO para DEPARTAMENTOS
+    // Implementasion de los métodos de la interfaz DAO.IDAO para DEPARTAMENTOS
 
     @Override
     public List<Department> findAllDepartments() {
@@ -215,6 +220,7 @@ public class TextFileDAO implements IDAO {
         return null;
     }
 
+    // todo si tiene empleados , no se borra el departamento.
     @Override
     public Department deleteDepartment(Object id) {
         int depId = (int) id;

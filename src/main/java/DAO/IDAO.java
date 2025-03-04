@@ -1,4 +1,5 @@
-package Pere.jdbc;
+package DAO;
+
 
 import java.util.List;
 

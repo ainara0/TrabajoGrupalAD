@@ -1,6 +1,9 @@
 package Rafa.hibernate;
 
+import DAO.Department;
+import DAO.Employee;
 import Rafa.main.HibernateMenu;
+import DAO.IDAO;
 import jakarta.persistence.EntityManager;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -13,7 +16,7 @@ public class HibernateDAO implements IDAO {
     private EntityManager entityManager = sessionFactory.createEntityManager();
 
     @Override
-    public List<Employee> findAllEmployees() {
+    public List<DAO.Employee> findAllEmployees() {
         System.out.println("");
         System.out.println("Has escodigo la opcion de listar empleados");
         System.out.println("");
@@ -23,6 +26,11 @@ public class HibernateDAO implements IDAO {
     @Override
     public Employee findEmployeeById(Object id) {
         return entityManager.find(Employee.class, id);
+    }
+
+    @Override
+    public void addEmployee(Pere.jdbc.Employee employee) {
+
     }
 
     @Override
@@ -145,6 +153,11 @@ public class HibernateDAO implements IDAO {
     @Override
     public Department findDepartmentById(Object id) {
         return entityManager.find(Department.class, id);
+    }
+
+    @Override
+    public boolean addDepartment(Pere.jdbc.Department department) {
+        return false;
     }
 
     @Override

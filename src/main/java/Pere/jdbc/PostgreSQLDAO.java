@@ -1,5 +1,9 @@
 package Pere.jdbc;
 
+import DAO.Department;
+import DAO.Employee;
+import DAO.IDAO;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +34,6 @@ public class PostgreSQLDAO implements IDAO {
                         rs.getInt("empno"),
                         rs.getString("nombre"),
                         rs.getString("puesto"),
-                        0.0, // No existe columna de salario en la BD
                         rs.getInt("depno")
                 );
                 employees.add(emp);
@@ -55,7 +58,6 @@ public class PostgreSQLDAO implements IDAO {
                         rs.getInt("empno"),
                         rs.getString("nombre"),
                         rs.getString("puesto"),
-                        0.0,
                         rs.getInt("depno")
                 );
             }
@@ -65,6 +67,7 @@ public class PostgreSQLDAO implements IDAO {
         return emp;
     }
 
+
     @Override
     public void addEmployee(Employee employee) {
         // Se insertan empno, nombre, puesto y depno (salary no existe en la BD)
@@ -73,9 +76,9 @@ public class PostgreSQLDAO implements IDAO {
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, employee.getId());
-            pstmt.setString(2, employee.getFirstName());
-            pstmt.setString(3, employee.getLastName());
-            pstmt.setInt(4, employee.getDepartmentId());
+            pstmt.setString(2, employee.getName());
+            pstmt.setString(3, employee.getJob());
+            pstmt.setInt(4, employee.getDeptId());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -99,7 +102,6 @@ public class PostgreSQLDAO implements IDAO {
                         rs.getInt("empno"),
                         rs.getString("nombre"),
                         rs.getString("puesto"),
-                        0.0,
                         rs.getInt("depno")
                 );
             }
@@ -139,7 +141,6 @@ public class PostgreSQLDAO implements IDAO {
                         rs.getInt("empno"),
                         rs.getString("nombre"),
                         rs.getString("puesto"),
-                        0.0,
                         rs.getInt("depno")
                 );
                 employees.add(emp);
@@ -162,7 +163,8 @@ public class PostgreSQLDAO implements IDAO {
             while (rs.next()) {
                 Department dept = new Department(
                         rs.getInt("depno"),
-                        rs.getString("nombre")
+                        rs.getString("nombre"),
+                        rs.getString("ubicacion")
                 );
                 departments.add(dept);
             }
@@ -184,7 +186,8 @@ public class PostgreSQLDAO implements IDAO {
             if (rs.next()) {
                 dept = new Department(
                         rs.getInt("depno"),
-                        rs.getString("nombre")
+                        rs.getString("nombre"),
+                        rs.getString("ubicacion")
                 );
             }
         } catch (SQLException e) {
@@ -226,7 +229,8 @@ public class PostgreSQLDAO implements IDAO {
             if (rs.next()) {
                 dept = new Department(
                         rs.getInt("depno"),
-                        rs.getString("nombre")
+                        rs.getString("nombre"),
+                        rs.getString("ubicacion")
                 );
             }
         } catch (SQLException e) {

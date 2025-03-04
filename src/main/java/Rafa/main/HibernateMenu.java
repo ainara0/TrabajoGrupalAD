@@ -1,5 +1,7 @@
 package Rafa.main;
 
+import DAO.Department;
+import DAO.IDAO;
 import Rafa.hibernate.*;
 
 import java.util.Scanner;
