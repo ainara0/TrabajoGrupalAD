@@ -63,8 +63,8 @@ public class TextFileDAO implements IDAO {
                             int id = Integer.parseInt(parts[0].trim());
                             String surname = parts[1].trim(); // Se mapea a firstName
                             String job = parts[2].trim();     // Se mapea a lastName
-                            int depId = Integer.parseInt(parts[3].trim());
-                            employees.add(new Employee(id, surname, job, depId));
+                            Department department = findDepartmentById(parts[3].trim());
+                            employees.add(new Employee(id, surname, job, department));
                         }
                     }
                 }
@@ -137,7 +137,7 @@ public class TextFileDAO implements IDAO {
         for (Employee e : employees) {
             if (e.getId() == empId) {
                 // Por ejemplo, actualizamos el campo job (lastName) a "Actualizado"
-                e.setLastName("Actualizado");
+                e.setName("Actualizado");
                 saveData();
                 return e;
             }
@@ -168,7 +168,7 @@ public class TextFileDAO implements IDAO {
         int depId = (int) idDept;
         List<Employee> result = new ArrayList<>();
         for (Employee e : employees) {
-            if (e.getDepartment() == depId) {
+            if (e.getDepartment() == findDepartmentById(depId)) {
                 result.add(e);
             }
         }
@@ -234,7 +234,7 @@ public class TextFileDAO implements IDAO {
         if (toRemove != null) {
             departments.remove(toRemove);
             //  podemos eliminar los empleados asociados a ese departamento
-            employees.removeIf(e -> e.getDepartmentId() == depId);
+            employees.removeIf(e -> e.getDepartment() == findDepartmentById(depId));
             saveData();
         }
         return toRemove;
