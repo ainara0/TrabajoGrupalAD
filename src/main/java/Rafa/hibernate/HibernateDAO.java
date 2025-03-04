@@ -1,5 +1,6 @@
 package Rafa.hibernate;
 
+import Rafa.main.HibernateMenu;
 import jakarta.persistence.EntityManager;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -13,6 +14,9 @@ public class HibernateDAO implements IDAO {
 
     @Override
     public List<Employee> findAllEmployees() {
+        System.out.println("");
+        System.out.println("Has escodigo la opcion de listar empleados");
+        System.out.println("");
         return entityManager.createQuery("SELECT e FROM Employee e", Employee.class).getResultList();
     }
 
@@ -51,40 +55,26 @@ public class HibernateDAO implements IDAO {
         System.out.println("4. Cambiar todo");
         System.out.println("5. Atrás");
         System.out.print("Seleccione una opción: ");
-        option = scanner.nextInt();
-        scanner.nextLine(); // Consumir nueva línea
+        option = HibernateMenu.askForNumber(1, 5);
 
         switch (option) {
             case 1 -> {
-                System.out.print("Ingrese el nuevo apellido: ");
-                employee.setName(scanner.nextLine());
+                if (askForNameFromEmployee(employee)) return null;
             }
             case 2 -> {
-                System.out.print("Ingrese el nuevo puesto: ");
-                employee.setJob(scanner.nextLine());
+                if (askForJobFromEmployee(employee)) return null;
             }
             case 3 -> {
-                System.out.print("Ingrese el id de departamento: ");
-                Department dept = findDepartmentById(Integer.parseInt(scanner.nextLine()));
-                if (dept == null) {
-                    System.err.println("Departamento no encontrado.");
-                    entityManager.getTransaction().rollback();
-                }
+                if (askForDepartmentFromEmployee()) return null;
             }
             case 4 -> {
-                System.out.print("Ingrese el nuevo apellido: ");
-                employee.setName(scanner.nextLine());
-                System.out.print("Ingrese el nuevo puesto: ");
-                employee.setJob(scanner.nextLine());
-                System.out.print("Ingrese el id de departamento: ");
-                Department dept = findDepartmentById(Integer.parseInt(scanner.nextLine()));
-                if (dept == null) {
-                    System.err.println("Departamento no encontrado.");
-                    entityManager.getTransaction().rollback();
-                }
+                if (askForNameFromEmployee(employee)) return null;
+
+                if (askForJobFromEmployee(employee)) return null;
+
+                if (askForDepartmentFromEmployee()) return null;
             }
             case 5 -> {
-                System.out.println("Regresando al menú principal...");
                 entityManager.getTransaction().rollback();
                 return null;
             }
@@ -97,6 +87,39 @@ public class HibernateDAO implements IDAO {
         System.out.println("Empleado actualizado correctamente.");
 
         return employee;
+    }
+
+    private boolean askForDepartmentFromEmployee() {
+        System.out.print("Ingrese el id de departamento: ");
+        Department dept = findDepartmentById(HibernateMenu.askForNumber());
+        if (dept == null) {
+            System.err.println("Departamento no encontrado.");
+            entityManager.getTransaction().rollback();
+            return true;
+        }
+        return false;
+    }
+
+    private boolean askForJobFromEmployee(Employee employee) {
+        System.out.print("Ingrese el nuevo puesto: ");
+        String job = HibernateMenu.askForString();
+        if (job == null) {
+            entityManager.getTransaction().rollback();
+            return true;
+        }
+        employee.setJob(job);
+        return false;
+    }
+
+    private boolean askForNameFromEmployee(Employee employee) {
+        System.out.print("Ingrese el nuevo apellido: ");
+        String name = HibernateMenu.askForString();
+        if (name == null) {
+            entityManager.getTransaction().rollback();
+            return true;
+        }
+        employee.setName(name);
+        return false;
     }
 
 
@@ -134,7 +157,6 @@ public class HibernateDAO implements IDAO {
 
     @Override
     public Department updateDepartment(Object id) {
-        Scanner scanner = new Scanner(System.in);
         entityManager.getTransaction().begin();
 
         Department department = entityManager.find(Department.class, id);
@@ -154,43 +176,25 @@ public class HibernateDAO implements IDAO {
         System.out.println("4. Cambiar Ambos");
         System.out.println("5. Atrás");
         System.out.print("Seleccione una opción: ");
-        option = scanner.nextInt();
-        scanner.nextLine(); // Consumir nueva línea
+        option = HibernateMenu.askForNumber();
+
 
         switch (option) {
             case 1 -> {
-                System.out.print("Ingrese el nuevo Id: ");
-                int deptId = Integer.parseInt(scanner.nextLine());
-                Department dept = findDepartmentById(deptId);
-                if (dept == null) {
-                    department.setId(deptId);
-                } else {
-                    System.err.println("Ese id de departamento ya existe");
-                    entityManager.getTransaction().rollback();
-                }
+                askForIdFromDepartment(department);
             }
             case 2 -> {
-                System.out.print("Ingrese el nuevo nombre: ");
-                department.setName(scanner.nextLine());
+                if (askForNameFromDepartment(department)) return null;
             }
             case 3 -> {
-                System.out.print("Ingrese la nueva ubicacion: ");
-                department.setCity(scanner.nextLine());
+                if (askForCityFromDepartment(department)) return null;
             }
             case 4 -> {
-                System.out.print("Ingrese el nuevo Id: ");
-                int deptId = Integer.parseInt(scanner.nextLine());
-                Department dept = findDepartmentById(deptId);
-                if (dept == null) {
-                    department.setId(deptId);
-                } else {
-                    System.err.println("Ese id de departamento ya existe");
-                    entityManager.getTransaction().rollback();
-                }
-                System.out.print("Ingrese el nuevo nombre: ");
-                department.setName(scanner.nextLine());
-                System.out.print("Ingrese la nueva ubicacion: ");
-                department.setCity(scanner.nextLine());
+                askForIdFromDepartment(department);
+
+                if (askForNameFromDepartment(department)) return null;
+
+                if (askForCityFromDepartment(department)) return null;
             }
             case 5 -> {
                 System.out.println("Regresando al menú principal...");
@@ -206,6 +210,40 @@ public class HibernateDAO implements IDAO {
         System.out.println("Empleado actualizado correctamente.");
 
         return department;
+    }
+
+    private boolean askForCityFromDepartment(Department department) {
+        System.out.print("Ingrese la nueva ubicacion: ");
+        String city = HibernateMenu.askForString();
+        if (city == null) {
+            entityManager.getTransaction().rollback();
+            return true;
+        }
+        department.setCity(city);
+        return false;
+    }
+
+    private boolean askForNameFromDepartment(Department department) {
+        System.out.print("Ingrese el nuevo nombre: ");
+        String name = HibernateMenu.askForString();
+        if (name == null) {
+            entityManager.getTransaction().rollback();
+            return true;
+        }
+        department.setName(name);
+        return false;
+    }
+
+    private void askForIdFromDepartment(Department department) {
+        System.out.print("Ingrese el nuevo Id: ");
+        int deptId = HibernateMenu.askForNumber();
+        Department dept = findDepartmentById(deptId);
+        if (dept == null) {
+            department.setId(deptId);
+        } else {
+            System.err.println("Ese id de departamento ya existe");
+            entityManager.getTransaction().rollback();
+        }
     }
 
     @Override
