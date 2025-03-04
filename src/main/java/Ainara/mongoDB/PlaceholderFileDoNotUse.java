@@ -11,22 +11,22 @@ import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Placeholder implements Closeable, IDAO {
+public class PlaceholderFileDoNotUse implements Closeable, IDAO {
     static MongoClient mongoClient;
     static MongoDatabase db;
-    static Placeholder placeholder;
+    static PlaceholderFileDoNotUse placeholderFileDoNotUse;
 
-    private Placeholder() {
+    private PlaceholderFileDoNotUse() {
         String connectionString = "mongodb+srv://admin:0000@cluster0.0pqj1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
         mongoClient = MongoClients.create(connectionString);
         db = mongoClient.getDatabase("GroupProject");
-        placeholder = this;
+        placeholderFileDoNotUse = this;
     }
 
     public static boolean createConnection() {
-        if (placeholder == null) {
+        if (placeholderFileDoNotUse == null) {
             try {
-                placeholder = new Placeholder();
+                placeholderFileDoNotUse = new PlaceholderFileDoNotUse();
             } catch (Exception e) {
                 return false;
             }
@@ -40,8 +40,8 @@ public class Placeholder implements Closeable, IDAO {
         mongoClient.close();
     }
 
-    public static Placeholder getConnection() {
-        return placeholder;
+    public static PlaceholderFileDoNotUse getConnection() {
+        return placeholderFileDoNotUse;
     }
 
     @Override
