@@ -77,13 +77,7 @@ public class HibernateDAO implements IDAO {
 
         int option;
 
-        System.out.println("\n--- Actualizar Empleado ---");
-        System.out.println("1. Cambiar nombre");
-        System.out.println("2. Cambiar puesto");
-        System.out.println("3. Cambiar departamento");
-        System.out.println("4. Cambiar todo");
-        System.out.println("5. Atrás");
-        System.out.print("Seleccione una opción: ");
+        menuUpdateEmployee();
         option = HibernateMenu.askForNumber(1, 5);
 
         switch (option) {
@@ -116,6 +110,16 @@ public class HibernateDAO implements IDAO {
         System.out.println("Empleado actualizado correctamente.");
 
         return employee;
+    }
+
+    private static void menuUpdateEmployee() {
+        System.out.println("\n--- Actualizar Empleado ---");
+        System.out.println("1. Cambiar nombre");
+        System.out.println("2. Cambiar puesto");
+        System.out.println("3. Cambiar departamento");
+        System.out.println("4. Cambiar todo");
+        System.out.println("5. Atrás");
+        System.out.print("Seleccione una opción: ");
     }
 
     private boolean askForDepartmentFromEmployee() {
