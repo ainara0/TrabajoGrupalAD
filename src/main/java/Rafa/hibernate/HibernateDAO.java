@@ -4,42 +4,68 @@ import DAO.Department;
 import DAO.Employee;
 import Rafa.main.HibernateMenu;
 import DAO.IDAO;
+import Utils.JpaConverter;
 import jakarta.persistence.EntityManager;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class HibernateDAO implements IDAO {
     SessionFactory sessionFactory = new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
     private EntityManager entityManager = sessionFactory.createEntityManager();
 
     @Override
-    public List<DAO.Employee> findAllEmployees() {
+    public List<Employee> findAllEmployees() {
         System.out.println("");
         System.out.println("Has escodigo la opcion de listar empleados");
         System.out.println("");
-        return entityManager.createQuery("SELECT e FROM Employee e", Employee.class).getResultList();
+        List<Employee> employees = new ArrayList<>();
+        List<EmployeeJPA> employeesJAR = entityManager.createQuery("SELECT e FROM EmployeeJPA e", EmployeeJPA.class).getResultList();
+        for (EmployeeJPA employeeJPA : employeesJAR) {
+            Employee employee = new Employee(
+                    employeeJPA.getId(),
+                    employeeJPA.getName(),
+                    employeeJPA.getJob(),
+                    JpaConverter.convertToEntity(employeeJPA.getDepno())
+
+            );
+            employees.add(employee);
+        }
+
+        return employees;
     }
 
     @Override
     public Employee findEmployeeById(Object id) {
-        return entityManager.find(Employee.class, id);
+        EmployeeJPA employeeJPA = entityManager.find(EmployeeJPA.class, id);
+
+        return new Employee(
+                employeeJPA.getId(),
+                employeeJPA.getName(),
+                employeeJPA.getJob(),
+                findDepartmentById(employeeJPA.getDepno().getId())
+        );
     }
 
     @Override
     public void addEmployee(Employee employee) {
+        EmployeeJPA employeeJPA = new EmployeeJPA(
+                employee.getName(),
+                employee.getJob(),
+                JpaConverter.convertToJPA(employee.getDepartment())
+        );
         entityManager.getTransaction().begin();
-        entityManager.persist(employee);
+        entityManager.persist(employeeJPA);
         entityManager.getTransaction().commit();
     }
 
 
     @Override
     public Employee updateEmployee(Object id) {
-        Scanner scanner = new Scanner(System.in);
         entityManager.getTransaction().begin();
+
 
         Employee employee = entityManager.find(Employee.class, id);
 

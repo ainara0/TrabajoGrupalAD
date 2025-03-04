@@ -1,5 +1,7 @@
 package DAO;
 
+import Rafa.hibernate.DepartmentJPA;
+
 public class Department {
     private int id;
     private String name;
@@ -37,4 +39,6 @@ public class Department {
     public void setLocation(String location) {
         this.location = location;
     }
+
+
 }

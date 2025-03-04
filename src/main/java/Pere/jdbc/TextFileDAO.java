@@ -87,7 +87,7 @@ public class TextFileDAO implements IDAO {
             pw.println(); // Línea en blanco
             pw.println("-- employees: employee(id,surname,job,department_id).");
             for (Employee e : employees) {
-                pw.println("employee(" + e.getId() + "," + e.getName() + "," + e.getJob() + "," + e.getDeptId() + ")");
+                pw.println("employee(" + e.getId() + "," + e.getName() + "," + e.getJob() + "," + e.getDepartment() + ")");
             }
             pw.flush();
         } catch (IOException e) {
@@ -118,13 +118,13 @@ public class TextFileDAO implements IDAO {
         // Comprobar que el departamento existe
         boolean deptExists = false;
         for (Department d : departments) {
-            if (d.getId() == employee.getDeptId()) {
+            if (findDepartmentById(d.getId()) == employee.getDepartment()) {
                 deptExists = true;
                 break;
             }
         }
         if (!deptExists) {
-            System.out.println("No existe el departamento con id: " + employee.getDeptId());
+            System.out.println("No existe el departamento con id: " + employee.getDepartment());
             return;
         }
         employees.add(employee);
@@ -168,7 +168,7 @@ public class TextFileDAO implements IDAO {
         int depId = (int) idDept;
         List<Employee> result = new ArrayList<>();
         for (Employee e : employees) {
-            if (e.getDeptId() == depId) {
+            if (e.getDepartment() == depId) {
                 result.add(e);
             }
         }

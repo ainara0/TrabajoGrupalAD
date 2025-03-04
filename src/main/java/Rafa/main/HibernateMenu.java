@@ -1,8 +1,8 @@
 package Rafa.main;
 
 import DAO.Department;
+import DAO.Employee;
 import DAO.IDAO;
-import Rafa.hibernate.*;
 
 import java.util.Scanner;
 
@@ -87,7 +87,7 @@ public class HibernateMenu {
         if (city == null) {
             return;
         }
-        dept.setCity(city);
+        dept.setLocation(city);
         dao.addDepartment(dept);
     }
 
@@ -138,7 +138,7 @@ public class HibernateMenu {
             System.err.println("El departamento no existe");
             return;
         }
-        emp.setDepno(dep);
+        emp.setDepartment(dep.getId());
         dao.addEmployee(emp);
     }
 

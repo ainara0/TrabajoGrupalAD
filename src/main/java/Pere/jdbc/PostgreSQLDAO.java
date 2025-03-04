@@ -34,7 +34,7 @@ public class PostgreSQLDAO implements IDAO {
                         rs.getInt("empno"),
                         rs.getString("nombre"),
                         rs.getString("puesto"),
-                        rs.getInt("depno")
+                        findDepartmentById(rs.getInt("depno"))
                 );
                 employees.add(emp);
             }
@@ -58,7 +58,7 @@ public class PostgreSQLDAO implements IDAO {
                         rs.getInt("empno"),
                         rs.getString("nombre"),
                         rs.getString("puesto"),
-                        rs.getInt("depno")
+                        findDepartmentById(rs.getInt("depno"))
                 );
             }
         } catch (SQLException e) {
@@ -78,7 +78,7 @@ public class PostgreSQLDAO implements IDAO {
             pstmt.setInt(1, employee.getId());
             pstmt.setString(2, employee.getName());
             pstmt.setString(3, employee.getJob());
-            pstmt.setInt(4, employee.getDeptId());
+            pstmt.setObject(4, findEmployeeById(employee.getDepartment().getId()));
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -102,7 +102,7 @@ public class PostgreSQLDAO implements IDAO {
                         rs.getInt("empno"),
                         rs.getString("nombre"),
                         rs.getString("puesto"),
-                        rs.getInt("depno")
+                        findDepartmentById(rs.getInt("depno"))
                 );
             }
         } catch (SQLException e) {
@@ -141,7 +141,7 @@ public class PostgreSQLDAO implements IDAO {
                         rs.getInt("empno"),
                         rs.getString("nombre"),
                         rs.getString("puesto"),
-                        rs.getInt("depno")
+                        findDepartmentById(rs.getInt("depno"))
                 );
                 employees.add(emp);
             }
