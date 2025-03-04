@@ -1,5 +1,7 @@
 package org.example;
 
+import DAO.Department;
+import DAO.Employee;
 import DAO.IDAO;
 import Rafa.main.DAOFactory;
 
@@ -52,7 +54,7 @@ public class Main {
                 case 4 -> {
                     Employee emp = new Employee();
                     System.out.print("Ingrese apellido: ");
-                    emp.setSurname(scanner.nextLine());
+                    emp.setName(scanner.nextLine());
                     System.out.print("Ingrese trabajo: ");
                     emp.setJob(scanner.nextLine());
                     dao.addEmployee(emp);

@@ -29,11 +29,6 @@ public class HibernateDAO implements IDAO {
     }
 
     @Override
-    public void addEmployee(Pere.jdbc.Employee employee) {
-
-    }
-
-    @Override
     public void addEmployee(Employee employee) {
         entityManager.getTransaction().begin();
         entityManager.persist(employee);
@@ -156,11 +151,6 @@ public class HibernateDAO implements IDAO {
     }
 
     @Override
-    public boolean addDepartment(Pere.jdbc.Department department) {
-        return false;
-    }
-
-    @Override
     public boolean addDepartment(Department department) {
         entityManager.getTransaction().begin();
         entityManager.persist(department);
@@ -232,7 +222,7 @@ public class HibernateDAO implements IDAO {
             entityManager.getTransaction().rollback();
             return true;
         }
-        department.setCity(city);
+        department.setLocation(city);
         return false;
     }
 
