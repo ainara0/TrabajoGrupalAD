@@ -17,7 +17,7 @@ public class Main {
         System.out.println("3. MongoDB");
         System.out.println("4. JDBC");
         System.out.print("Ingrese opción: ");
-        int dbOption = scanner.nextInt();
+        int dbOption = Utils.Ask.askForNumber(1,4);
 
         IDAO dao = DAOFactory.getDAO(dbOption);  // Obtiene la implementación correcta
 
@@ -44,19 +44,22 @@ public class Main {
                 case 2 -> {
                     System.out.print("Ingrese ID del empleado: ");
                     int id = scanner.nextInt();
-                    System.out.println(dao.findEmployeeById(id));
+                    dao.findEmployeeById(id);
                 }
                 case 3 -> {
                     System.out.print("Ingrese ID del departamento: ");
-                    int idDept = scanner.nextInt();
+                    int idDept = Utils.Ask.askForNumber();
                     dao.findEmployeesByDept(idDept).forEach(System.out::println);
                 }
                 case 4 -> {
                     Employee emp = new Employee();
-                    System.out.print("Ingrese apellido: ");
+                    System.out.print("Ingrese el nombre: ");
                     emp.setName(scanner.nextLine());
-                    System.out.print("Ingrese trabajo: ");
+                    System.out.print("Ingrese el puesto de trabajo: ");
                     emp.setJob(scanner.nextLine());
+                    System.out.println("ingrese el id del departamento");
+                    Department dept = dao.findDepartmentById(Utils.Ask.askForNumber());
+                    emp.setDepartment(dept);
                     dao.addEmployee(emp);
                 }
                 case 5 -> {
@@ -77,8 +80,12 @@ public class Main {
                 }
                 case 9 -> {
                     Department dept = new Department();
+                    System.out.println("Ingrese el ID del nuevo departamento: ");
+                    dept.setId(Utils.Ask.askForNumber());
                     System.out.print("Ingrese nombre del departamento: ");
-                    dept.setName(scanner.nextLine());
+                    dept.setName(Utils.Ask.askForString());
+                    System.out.println("Ingrese la ubicación del departamento: ");
+                    dept.setLocation(Utils.Ask.askForString());
                     dao.addDepartment(dept);
                 }
                 case 10 -> {

@@ -48,5 +48,9 @@ public class Employee {
         this.name = name;
     }
 
+    @Override
+    public String toString() {
+        return "Employee{" + "\n ID=" + id + ", \n Name=" + name + ",\n Job=" + job + "\n DeptID=" + department.getId() + "} \n _______________________________";
+    }
 
 }

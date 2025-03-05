@@ -24,14 +24,6 @@ public class EmployeeJPA {
     @JoinColumn(name = "depno")
     private DepartmentJPA depno;
 
-    public EmployeeJPA(Employee employee) {
-        this.id = employee.getId();
-        this.name = employee.getName();
-        this.job = employee.getJob();
-        this.depno = ConvertersJPA.convertToJPA(employee.getDepartment());
-
-    }
-
     public EmployeeJPA(String name, String job, DepartmentJPA depno) {
         this.name = name;
         this.job = job;

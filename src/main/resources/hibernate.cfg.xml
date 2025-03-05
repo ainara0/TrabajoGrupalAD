@@ -10,7 +10,7 @@
         <!--  DB Password  -->
         <property name="hibernate.hbm2ddl.auto">update</property>
         <!--  create / create-drop / update  -->
-        <mapping class="DAO.Department"/>
-        <mapping class="DAO.Employee"/>
+        <mapping class="Rafa.hibernate.DepartmentJPA"/>
+        <mapping class="Rafa.hibernate.EmployeeJPA"/>
     </session-factory>
 </hibernate-configuration>
