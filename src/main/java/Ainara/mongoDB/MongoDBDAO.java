@@ -11,11 +11,11 @@ import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MongoDB implements Closeable, IDAO {
+public class MongoDBDAO implements Closeable, IDAO {
     static MongoClient mongoClient;
     static MongoDatabase db;
 
-    private MongoDB() {
+    MongoDBDAO() {
         String connectionString = "mongodb+srv://admin:0000@cluster0.0pqj1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
         mongoClient = MongoClients.create(connectionString);
         db = mongoClient.getDatabase("GroupProject");
