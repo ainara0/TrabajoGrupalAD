@@ -4,8 +4,16 @@ import DAO.Department;
 import DAO.Employee;
 import DAO.IDAO;
 
+import java.util.List;
+
 public class Main {
+    IDAO dao = null;
+
     public static void main(String[] args) {
+        new Main();
+    }
+    
+    public Main() {
         boolean isFinished = false;
         do {
             System.out.println("Seleccione una base de datos:");
@@ -18,7 +26,7 @@ public class Main {
             System.out.print("Ingrese opción: ");
             int dbOption = Utils.Ask.askForNumber(0, 5);
             try {
-                IDAO dao = DAOFactory.getDAO(dbOption);
+                dao = DAOFactory.getDAO(dbOption);
                 if (dao == null) {
                     isFinished = true;
                 } else {
@@ -30,7 +38,7 @@ public class Main {
         } while (!isFinished);
     }
 
-    private static void actionsMenu(IDAO dao) {
+    private void actionsMenu(IDAO dao) {
         int option;
         do {
             System.out.println("1. Listar empleados");
@@ -51,8 +59,7 @@ public class Main {
                 System.out.print("____________________________________\n");
             }
             switch (option) {
-                case 1 -> dao.findAllEmployees().forEach(System.out::println);
-
+                case 1 -> printEmployeesTF();
                 case 2 -> {
                     System.out.print("Ingrese ID del empleado: ");
                     int id = Utils.Ask.askForNumber();
@@ -112,5 +119,16 @@ public class Main {
                 }
             }
         } while (option != 0);
+    }
+
+    private void printEmployeesTF() {
+        List<Employee> employees = dao.findAllEmployees();
+        if (employees != null && !employees.isEmpty()) {
+            for (Employee employee : employees) {
+                System.out.println(employee);
+            }
+        } else {
+            System.out.println("No existen empleados");
+        }
     }
 }
