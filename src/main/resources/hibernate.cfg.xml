@@ -1,12 +1,12 @@
 <hibernate-configuration>
     <session-factory>
-        <property name="connection.url">jdbc:postgresql://localhost:5432/postgres</property>
+        <property name="connection.url">jdbc:postgresql://pm0002.conectabalear.net:5432/empresa</property>
         <!--  BD Mane  -->
         <property name="connection.driver_class">org.postgresql.Driver</property>
         <!--  DB Driver  -->
-        <property name="connection.username">postgres</property>
+        <property name="connection.username">test</property>
         <!--  DB User  -->
-        <property name="connection.password">12345</property>
+        <property name="connection.password">contraseña_segura_patata_12112</property>
         <!--  DB Password  -->
         <property name="hibernate.hbm2ddl.auto">update</property>
         <!--  create / create-drop / update  -->
