@@ -17,7 +17,7 @@ public class Main {
             System.out.println("5. TextFile");
             System.out.println("0. Salir");
             System.out.print("Ingrese opción: ");
-            int dbOption = Utils.Ask.askForNumber(0, 4);
+            int dbOption = Utils.Ask.askForNumber(0, 5);
 
             IDAO dao = DAOFactory.getDAO(dbOption);  // Obtiene la implementación correcta
             if (dao == null) {
