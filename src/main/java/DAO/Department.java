@@ -39,6 +39,6 @@ public class Department {
     }
     @Override
     public String toString() {
-        return "Department [ \n ID=" + id + "\n Name=" + name + "\n Location=" + location + "]";
+        return "Department: \n ID=" + id + "\n Name=" + name + "\n Location=" + location + " \n ____________________________________";
     }
 }

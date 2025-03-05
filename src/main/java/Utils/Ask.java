@@ -18,22 +18,18 @@ public class Ask {
     }
 
     public static int askForNumber(int min, int max) {
-        String finalInput = null;
-        do {
-            String input = askForString();
-            if (!isNumeric(input)) {
-                System.out.println("Input is not a number. Try again.");
-                finalInput = null;
+
+        String input = scanner.nextLine();
+        if (!isNumeric(input)) {
+            System.out.println("Input is not a number. Try again.");
+        } else {
+            int number = Integer.parseInt(input);
+            if (!((number > (min - 1)) && (number < (max + 1)))) {
+                System.out.println("Input is not a valid number. Try again.");
             } else {
-                int number = Integer.parseInt(input);
-                if (!((number > (min - 1)) && (number < (max + 1)))) {
-                    System.out.println("Input is not a valid number. Try again.");
-                } else {
-                    finalInput = input;
-                    return number;
-                }
+                return number;
             }
-        } while (!isNumeric(finalInput));
+        }
         return -1;
     }
 
