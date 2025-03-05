@@ -181,7 +181,7 @@ public class TextFileDAO implements IDAO {
         // Check if an employee with the same ID already exists
         for (Employee e : employees) {
             if (e.getId() == employee.getId()) {
-                System.out.println("An employee with the ID already exists: " + employee.getId());
+                System.out.println("Ya existe un empleado con el ID:" + employee.getId());
                 return;
             }
         }
@@ -194,7 +194,7 @@ public class TextFileDAO implements IDAO {
             }
         }
         if (!deptExists) {
-            System.out.println("The department with id " + employee.getDepartment().getId() + " does not exist.");
+            System.out.println("El departamento con id " + employee.getDepartment().getId() + " no existe.");
             return;
         }
         employees.add(employee);
@@ -222,63 +222,63 @@ public class TextFileDAO implements IDAO {
         Scanner scanner = new Scanner(System.in);
         for (Employee e : employees) {
             if (e.getId() == empId) {
-                System.out.println("Select the field to update for the employee:");
-                System.out.println("1. Name");
-                System.out.println("2. Job");
-                System.out.println("3. Department");
-                System.out.println("4. All fields");
-                System.out.print("Option: ");
+                System.out.println("Seleccione el campo que desea actualizar para el empleado:");
+                System.out.println("1. Nombre");
+                System.out.println("2. Trabajo");
+                System.out.println("3. Departamento");
+                System.out.println("4. Todos los campos");
+                System.out.print("Opciones: ");
                 int option;
                 try {
                     option = Integer.parseInt(scanner.nextLine());
                 } catch (NumberFormatException ex) {
-                    System.out.println("Error: Option must be an integer.");
+                    System.out.println("Error: La opción debe ser un número entero.");
                     return null;
                 }
 
                 switch (option) {
                     case 1:
-                        System.out.print("Enter the new name: ");
+                        System.out.print("Introduzca el nuevo nombre: ");
                         String newName = scanner.nextLine();
                         e.setName(newName);
                         break;
                     case 2:
-                        System.out.print("Enter the new job: ");
+                        System.out.print("Introduzca el nuevo trabajo: ");
                         String newJob = scanner.nextLine();
                         e.setJob(newJob);
                         break;
                     case 3:
-                        System.out.print("Enter the new department id: ");
+                        System.out.print("Introduzca el nuevo ID del departamento: ");
                         int newDepId;
                         try {
                             newDepId = Integer.parseInt(scanner.nextLine());
                         } catch (NumberFormatException ex) {
-                            System.out.println("Error: Department id must be an integer.");
+                            System.out.println("Error: El ID del departamento debe ser un número entero.");
                             return null;
                         }
                         Department newDept = findDepartmentById(newDepId);
                         if (newDept == null) {
-                            System.out.println("Department not found.");
+                            System.out.println("Departamento no encontrado.");
                             return null;
                         }
                         e.setDepartment(newDept);
                         break;
                     case 4:
-                        System.out.print("Enter the new name: ");
+                        System.out.print("Introduzca el nuevo nombre: ");
                         String allName = scanner.nextLine();
-                        System.out.print("Enter the new job: ");
+                        System.out.print("Introduzca el nuevo trabajo: ");
                         String allJob = scanner.nextLine();
-                        System.out.print("Enter the new department id: ");
+                        System.out.print("Introduzca el nuevo ID del departamento: ");
                         int allDepId;
                         try {
                             allDepId = Integer.parseInt(scanner.nextLine());
                         } catch (NumberFormatException ex) {
-                            System.out.println("Error: Department id must be an integer.");
+                            System.out.println("Error: el ID del departamento debe ser un número entero.");
                             return null;
                         }
                         Department allDept = findDepartmentById(allDepId);
                         if (allDept == null) {
-                            System.out.println("Department not found.");
+                            System.out.println("Departamento no encontrado.");
                             return null;
                         }
                         e.setName(allName);
@@ -286,7 +286,7 @@ public class TextFileDAO implements IDAO {
                         e.setDepartment(allDept);
                         break;
                     default:
-                        System.out.println("Invalid option.");
+                        System.out.println("Opción inválida.");
                         return null;
                 }
                 saveData();
@@ -409,35 +409,35 @@ public class TextFileDAO implements IDAO {
         Scanner scanner = new Scanner(System.in);
         for (Department d : departments) {
             if (d.getId() == depId) {
-                System.out.println("Select the field to update for the department:");
-                System.out.println("1. Name");
-                System.out.println("2. City");
-                System.out.println("3. Both");
-                System.out.print("Option: ");
+                System.out.println("Seleccione el campo a actualizar para el departamento:");
+                System.out.println("1. Nombre");
+                System.out.println("2. Ciudad");
+                System.out.println("3. Ambas");
+                System.out.print("Opcion: ");
                 int option = scanner.nextInt();
                 scanner.nextLine(); // Consume newline
 
                 switch (option) {
                     case 1:
-                        System.out.print("Enter the new name: ");
+                        System.out.print("Introduzca el nuevo nombre: ");
                         String newName = scanner.nextLine();
                         d.setName(newName);
                         break;
                     case 2:
-                        System.out.print("Enter the new city: ");
+                        System.out.print("Introduzca la nueva ciudad: ");
                         String newCity = scanner.nextLine();
                         d.setLocation(newCity);
                         break;
                     case 3:
-                        System.out.print("Enter the new name: ");
+                        System.out.print("Introduzca el nuevo nombre: ");
                         String allName = scanner.nextLine();
-                        System.out.print("Enter the new city: ");
+                        System.out.print("Introduzca la nueva ciudad: ");
                         String allCity = scanner.nextLine();
                         d.setName(allName);
                         d.setLocation(allCity);
                         break;
                     default:
-                        System.out.println("Invalid option.");
+                        System.out.println("Opción inválida.");
                         return null;
                 }
                 saveData();
@@ -477,7 +477,7 @@ public class TextFileDAO implements IDAO {
                 }
             }
             if (hasEmployees) {
-                System.out.println("Department cannot be deleted; it has employees assigned to it.");
+                System.out.println("El departamento no se puede eliminar; tiene empleados asignados a él.");
                 return null;
             }
             departments.remove(toRemove);

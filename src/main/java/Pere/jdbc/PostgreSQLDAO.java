@@ -113,11 +113,9 @@ public class PostgreSQLDAO implements IDAO {
                 }
             }
         } catch (SQLException e) {
-            if ("23503".equals(e.getSQLState())) { // Foreign key violation
-                System.out.println("Error: The specified department does not exist. Please add the department first.");
-            } else {
-                e.printStackTrace();
-            }
+
+            e.printStackTrace();
+
         }
     }
 
@@ -138,11 +136,11 @@ public class PostgreSQLDAO implements IDAO {
     @Override
     public Employee updateEmployee(Object id) {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Select the field to update:");
-        System.out.println("1. Name");
-        System.out.println("2. Job");
-        System.out.println("3. Department (depno)");
-        System.out.print("Option: ");
+        System.out.println("Seleccione el campo a actualizar:");
+        System.out.println("1. Nombre");
+        System.out.println("2. Trabajo");
+        System.out.println("3. Depatamento");
+        System.out.print("Opcion: ");
         int option = scanner.nextInt();
         scanner.nextLine(); // Consume newline
 
@@ -158,11 +156,11 @@ public class PostgreSQLDAO implements IDAO {
                 field = "depno";
                 break;
             default:
-                System.out.println("Invalid option.");
+                System.out.println("Invalida opcion.");
                 return null;
         }
 
-        System.out.print("Enter the new value for " + field + ": ");
+        System.out.print("Introduzca el nuevo valor para " + field + ": ");
         String newValue = scanner.nextLine();
 
         String sql = "UPDATE empleado SET " + field + " = ? WHERE empno = ? RETURNING empno, nombre, puesto, depno";
@@ -343,11 +341,11 @@ public class PostgreSQLDAO implements IDAO {
         Department dept = null;
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Select the field to update:");
-        System.out.println("1. Name");
-        System.out.println("2. Location");
-        System.out.println("3. Both");
-        System.out.print("Option: ");
+        System.out.println("Seleccione el campo a actualizar:");
+        System.out.println("1. Nombre");
+        System.out.println("2. Localidad");
+        System.out.println("3. Ambas");
+        System.out.print("Opcion: ");
         int option = scanner.nextInt();
         scanner.nextLine(); // Consume newline
 
@@ -372,21 +370,21 @@ public class PostgreSQLDAO implements IDAO {
 
             switch (option) {
                 case 1:
-                    System.out.print("Enter the new name: ");
+                    System.out.print("Introduce el nuevo nombre: ");
                     String newName = scanner.nextLine();
                     pstmt.setString(1, newName);
                     pstmt.setInt(2, (int) id);
                     break;
                 case 2:
-                    System.out.print("Enter the new location: ");
+                    System.out.print("Introduce la nueva localidad: ");
                     String newLocation = scanner.nextLine();
                     pstmt.setString(1, newLocation);
                     pstmt.setInt(2, (int) id);
                     break;
                 case 3:
-                    System.out.print("Enter the new name: ");
+                    System.out.print("Introduzca el nuevo nombre: ");
                     String name = scanner.nextLine();
-                    System.out.print("Enter the new location: ");
+                    System.out.print("Introduzca la nueva ubicación: ");
                     String location = scanner.nextLine();
                     pstmt.setString(1, name);
                     pstmt.setString(2, location);
