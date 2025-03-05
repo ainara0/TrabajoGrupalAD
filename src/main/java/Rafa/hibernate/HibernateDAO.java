@@ -2,7 +2,6 @@ package Rafa.hibernate;
 
 import DAO.Department;
 import DAO.Employee;
-import Rafa.main.HibernateMenu;
 import DAO.IDAO;
 import Utils.ConvertersJPA;
 import jakarta.persistence.EntityManager;
@@ -77,7 +76,7 @@ public class HibernateDAO implements IDAO {
         int option;
 
         menuUpdateEmployee();
-        option = HibernateMenu.askForNumber(1, 5);
+        option = Utils.Ask.askForNumber(1, 5);
 
         switch (option) {
             case 1 -> {
@@ -128,7 +127,7 @@ public class HibernateDAO implements IDAO {
 
     private boolean askForDepartmentFromEmployee() {
         System.out.print("Ingrese el id de departamento: ");
-        int deptId = HibernateMenu.askForNumber();
+        int deptId = Utils.Ask.askForNumber();
 
         DepartmentJPA deptJpa = entityManager.find(DepartmentJPA.class, deptId);
         if (deptJpa == null) {
@@ -141,7 +140,7 @@ public class HibernateDAO implements IDAO {
 
     private boolean askForJobFromEmployee(EmployeeJPA employee) {
         System.out.print("Ingrese el nuevo puesto: ");
-        String job = HibernateMenu.askForString();
+        String job = Utils.Ask.askForString();
         if (job == null) {
             entityManager.getTransaction().rollback();
             return true;
@@ -152,7 +151,7 @@ public class HibernateDAO implements IDAO {
 
     private boolean askForNameFromEmployee(EmployeeJPA employee) {
         System.out.print("Ingrese el nuevo apellido: ");
-        String name = HibernateMenu.askForString();
+        String name = Utils.Ask.askForString();
         if (name == null) {
             entityManager.getTransaction().rollback();
             return true;
@@ -229,7 +228,7 @@ public class HibernateDAO implements IDAO {
         System.out.println("4. Cambiar Ambos");
         System.out.println("5. Atrás");
         System.out.print("Seleccione una opción: ");
-        option = HibernateMenu.askForNumber();
+        option = Utils.Ask.askForNumber();
 
 
         switch (option) {
@@ -271,7 +270,7 @@ public class HibernateDAO implements IDAO {
 
     private boolean askForCityFromDepartment(DepartmentJPA department) {
         System.out.print("Ingrese la nueva ubicacion: ");
-        String city = HibernateMenu.askForString();
+        String city = Utils.Ask.askForString();
         if (city == null) {
             entityManager.getTransaction().rollback();
             return true;
@@ -282,7 +281,7 @@ public class HibernateDAO implements IDAO {
 
     private boolean askForNameFromDepartment(DepartmentJPA department) {
         System.out.print("Ingrese el nuevo nombre: ");
-        String name = HibernateMenu.askForString();
+        String name = Utils.Ask.askForString();
         if (name == null) {
             entityManager.getTransaction().rollback();
             return true;
@@ -293,7 +292,7 @@ public class HibernateDAO implements IDAO {
 
     private void askForIdFromDepartment(DepartmentJPA department) {
         System.out.print("Ingrese el nuevo Id: ");
-        int deptId = HibernateMenu.askForNumber();
+        int deptId = Utils.Ask.askForNumber();
         Department dept = findDepartmentById(deptId);
         if (dept == null) {
             department.setId(deptId);
