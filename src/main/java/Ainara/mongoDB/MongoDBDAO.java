@@ -28,6 +28,7 @@ public class MongoDBDAO implements Closeable, IDAO {
 
     @Override
     public boolean addDepartment(Department department) {
+        // todo se duplica si hay exactamente los mismos datos? se comprueba que existe?
         MongoCollection<Document> departmentsCollection = db.getCollection("Department");
         Document document = new Document()
                 .append("_id", department.getId())
@@ -75,9 +76,11 @@ public class MongoDBDAO implements Closeable, IDAO {
 
     @Override
     public Employee updateEmployee(Object employeeObject) {
+        // todo pasas un objeto tipo Employee por parámetro? en main se pasa un int
         if (!(employeeObject instanceof Employee employee)) {
             return null;
         }
+
         MongoCollection<Document> employeesCollection = db.getCollection("Employee");
         Bson query = Filters.eq("_id", employee.getId());
         Bson updates = Updates.combine(
@@ -118,6 +121,7 @@ public class MongoDBDAO implements Closeable, IDAO {
 
     @Override
     public Department updateDepartment(Object departmentObject) {
+        // todo no pasamos Department pasamos int
         if (!(departmentObject instanceof Department department)) {
             return null;
         }

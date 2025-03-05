@@ -133,6 +133,7 @@ public class TextFileDAO implements IDAO {
                 pw.println("employee(" + e.getId() + "," + e.getName() + "," + e.getJob() + "," + e.getDepartment().getId() + ")");
             }
             pw.flush();
+
         } catch (IOException e) {
             e.printStackTrace();
         }

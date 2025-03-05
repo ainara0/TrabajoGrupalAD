@@ -28,7 +28,6 @@ public class HibernateDAO implements IDAO {
                     employeeJPA.getName(),
                     employeeJPA.getJob(),
                     ConvertersJPA.convertToEntity(employeeJPA.getDepno())
-
             );
             employees.add(employee);
         }
@@ -49,7 +48,6 @@ public class HibernateDAO implements IDAO {
             System.out.println(employee);
             return employee;
         } else {
-            System.err.println("El empleado con id " + id + " no existe");
             return null;
         }
     }
@@ -74,7 +72,6 @@ public class HibernateDAO implements IDAO {
         EmployeeJPA employeeJpa = entityManager.find(EmployeeJPA.class, id);
 
         if (employeeJpa == null) {
-            System.err.println("Empleado no encontrado.");
             entityManager.getTransaction().rollback();
             return null;
         }
@@ -137,7 +134,7 @@ public class HibernateDAO implements IDAO {
 
         DepartmentJPA deptJpa = entityManager.find(DepartmentJPA.class, deptId);
         if (deptJpa == null) {
-            System.err.println("Departamento no encontrado.");
+            System.out.println("El departamento no existe.");
             entityManager.getTransaction().rollback();
             return true;
         }
@@ -210,7 +207,6 @@ public class HibernateDAO implements IDAO {
         } else{
             entityManager.getTransaction().rollback();
             return null;
-
         }
     }
 
@@ -223,7 +219,6 @@ public class HibernateDAO implements IDAO {
             entityManager.getTransaction().commit();
             return true;
         } else {
-            System.err.println("El departamento con id " + department.getId() + " ya existe");
             entityManager.getTransaction().rollback();
             return false;
         }
@@ -236,7 +231,6 @@ public class HibernateDAO implements IDAO {
         DepartmentJPA departmentJPA = entityManager.find(DepartmentJPA.class, id);
 
         if (departmentJPA == null) {
-            System.err.println("Departamento no encontrado.");
             entityManager.getTransaction().rollback();
             return null;
         }

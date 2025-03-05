@@ -15,6 +15,7 @@ public class Db4oDAO implements Closeable, IDAO {
     ObjectContainer container;
 
     public Db4oDAO() {
+        connectToDatabase();
     }
 
     public ObjectContainer getContainer() {
@@ -22,6 +23,7 @@ public class Db4oDAO implements Closeable, IDAO {
     }
     public boolean connectToDatabase() {
         try {
+            // todo mirar si el nombre de la base de datos es correcta
             container = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(),"GroupProject");
         } catch (Exception e) {
             return false;
@@ -61,6 +63,7 @@ public class Db4oDAO implements Closeable, IDAO {
 
     @Override
     public Employee updateEmployee(Object employeeObject) {
+        // todo se pasa por parámetro un objeto tipo Employee, nosotros pasamos int
         if (!(employeeObject instanceof Employee employee)) {return null;}
         try {
             container.store(employee);
@@ -72,6 +75,7 @@ public class Db4oDAO implements Closeable, IDAO {
 
     @Override
     public boolean deleteEmployee(Object employeeObject) {
+        // todo se pasa por parámetro un objeto tipo Employee, nosotros pasamos int
         if (!(employeeObject instanceof Employee employee)) {return false;}
         try {
             container.delete(employee);
@@ -92,6 +96,7 @@ public class Db4oDAO implements Closeable, IDAO {
 
     @Override
     public Department findDepartmentById(Object id) {
+        // todo si es numerico null?? pasas int y hay que devolver null o Department
         if (!isNumeric(id)) { return null; }
         ObjectSet<Department> result = container.query(new Predicate<>() {
             public boolean match(Department department) {
@@ -106,6 +111,7 @@ public class Db4oDAO implements Closeable, IDAO {
 
     @Override
     public boolean addDepartment(Department department) {
+        // todo el .store comprueba si existe el departamento antes de añadirlo?
         try {
             container.store(department);
         } catch (Exception e) {
@@ -116,6 +122,7 @@ public class Db4oDAO implements Closeable, IDAO {
 
     @Override
     public Department updateDepartment(Object departmentObject) {
+        // todo no pasamos Department, pasamos int
         if (!(departmentObject instanceof Department department)) {return null;}
         try {
             container.store(department);
@@ -127,6 +134,7 @@ public class Db4oDAO implements Closeable, IDAO {
 
     @Override
     public Department deleteDepartment(Object departmentObject) {
+        // todo pasamos int no Department
         if (!(departmentObject instanceof Department department)) {return null;}
         try {
             container.delete(department);
