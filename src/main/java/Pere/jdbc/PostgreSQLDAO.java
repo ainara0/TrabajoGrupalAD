@@ -155,7 +155,7 @@ public class PostgreSQLDAO implements IDAO {
                     Department dept = findDepartmentById(depId);
                     employee.setDepartment(dept);
                 } else {
-                    System.out.println("El empleado no existe en la base de datos.");
+
                     return null;
                 }
             }
