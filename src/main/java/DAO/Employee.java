@@ -4,16 +4,16 @@ public class Employee {
     private int id;
     private String name;
     private String job;
-    private int deptId;
+    private Department department;
 
     public Employee() {
     }
 
-    public Employee(int id, String name, String job, int deptId) {
+    public Employee(int id, String name, String job, Department department) {
         this.id = id;
         this.name = name;
         this.job = job;
-        this.deptId = deptId;
+        this.department = department;
     }
 
     public int getId() {
@@ -24,12 +24,12 @@ public class Employee {
         this.id = id;
     }
 
-    public int getDeptId() {
-        return deptId;
+    public Department getDepartment() {
+        return department;
     }
 
-    public void setDeptId(int deptId) {
-        this.deptId = deptId;
+    public void setDepartment(Department deptId) {
+        this.department = deptId;
     }
 
     public String getJob() {
@@ -47,4 +47,6 @@ public class Employee {
     public void setName(String name) {
         this.name = name;
     }
+
+
 }

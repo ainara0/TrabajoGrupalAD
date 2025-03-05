@@ -44,7 +44,7 @@ public class Connection implements Closeable, IDAO {
                 .append("_id", employee.getId())
                 .append("name", employee.getName())
                 .append("job", employee.getJob())
-                .append("department_id", employee.getDeptId())
+                .append("department_id", employee.getDepartment())
                 ;
         employeesCollection.insertOne(document);
     }

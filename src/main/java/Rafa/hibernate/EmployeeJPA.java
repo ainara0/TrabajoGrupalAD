@@ -1,7 +1,8 @@
 package Rafa.hibernate;
 
 import DAO.Employee;
-import Utils.JpaConverter;
+import Utils.ConvertersJPA;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -27,7 +28,7 @@ public class EmployeeJPA {
         this.id = employee.getId();
         this.name = employee.getName();
         this.job = employee.getJob();
-        this.depno = JpaConverter.convertToJPA(employee.getDepartment());
+        this.depno = ConvertersJPA.convertToJPA(employee.getDepartment());
 
     }
 

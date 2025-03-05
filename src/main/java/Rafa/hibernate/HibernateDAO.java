@@ -4,7 +4,7 @@ import DAO.Department;
 import DAO.Employee;
 import Rafa.main.HibernateMenu;
 import DAO.IDAO;
-import Utils.JpaConverter;
+import Utils.ConvertersJPA;
 import jakarta.persistence.EntityManager;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -28,7 +28,7 @@ public class HibernateDAO implements IDAO {
                     employeeJPA.getId(),
                     employeeJPA.getName(),
                     employeeJPA.getJob(),
-                    JpaConverter.convertToEntity(employeeJPA.getDepno())
+                    ConvertersJPA.convertToEntity(employeeJPA.getDepno())
 
             );
             employees.add(employee);
@@ -54,7 +54,7 @@ public class HibernateDAO implements IDAO {
         EmployeeJPA employeeJPA = new EmployeeJPA(
                 employee.getName(),
                 employee.getJob(),
-                JpaConverter.convertToJPA(employee.getDepartment())
+                ConvertersJPA.convertToJPA(employee.getDepartment())
         );
         entityManager.getTransaction().begin();
         entityManager.persist(employeeJPA);
