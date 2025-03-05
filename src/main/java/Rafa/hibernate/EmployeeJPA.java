@@ -9,8 +9,7 @@ import jakarta.persistence.*;
 @Table(name = "empleado")
 public class EmployeeJPA {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "employee_id_gen")
-    @SequenceGenerator(name = "employee_id_gen", sequenceName = "employee_empno_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "empno", nullable = false)
     private Integer id;
 
@@ -65,6 +64,7 @@ public class EmployeeJPA {
     public void setDepno(DepartmentJPA depno) {
         this.depno = depno;
     }
+
     @Override
     public String toString() {
         return "Employee{" + "id=" + id + ", name=" + name + ", job=" + job + "depno=" + depno + '}';

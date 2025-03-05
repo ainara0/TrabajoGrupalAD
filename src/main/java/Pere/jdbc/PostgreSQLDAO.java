@@ -93,6 +93,7 @@ public class PostgreSQLDAO implements IDAO {
      *
      * @param employee the {@link Employee} object to add (the id will be auto-assigned).
      */
+
     @Override
     public void addEmployee(Employee employee) {
         // It is assumed that the "empno" column is SERIAL and auto-generated.
