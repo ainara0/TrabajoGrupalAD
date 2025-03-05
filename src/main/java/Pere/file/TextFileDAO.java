@@ -7,53 +7,84 @@ import DAO.IDAO;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
+/**
+ * Implementation of the IDAO interface for file-based data storage.
+ * <p>
+ * This class reads and writes data from/to a text file (empresa.txt) for both employees and departments.
+ * It provides basic CRUD operations and stores data in memory, synchronizing changes with the file.
+ * </p>
+ * <p>
+ * The file is expected to contain lines in the following formats:
+ * <ul>
+ *   <li>Departments: <code>department(id,name,city)</code></li>
+ *   <li>Employees: <code>employee(id,surname,job,department_id)</code></li>
+ * </ul>
+ * </p>
+ */
 public class TextFileDAO implements IDAO {
 
-    // Ruta del fichero de datos (asegúrate de que esté en el directorio correcto)
+    /** Data file path (make sure it is in the correct directory) */
     private final String filePath = "empresa.txt";
 
-    // Listas para almacenar los datos en memoria
+    /** List of departments loaded from the file */
     private List<Department> departments;
+    /** List of employees loaded from the file */
     private List<Employee> employees;
 
-    // Constructor: carga los datos del fichero al iniciar
+    /**
+     * Constructor: Loads data from the file upon initialization.
+     */
     public TextFileDAO() {
         departments = new ArrayList<>();
         employees = new ArrayList<>();
         loadData();
     }
 
-    //Metodo carga los datos al fichero en la listas
+    /**
+     * Loads data from the file into the in-memory lists.
+     * <p>
+     * First, it reads all department entries, then it re-reads the file to load employee entries.
+     * If an employee references a department that is not yet loaded, a default department is created.
+     * </p>
+     */
     private void loadData() {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
+            // First, load departments
             while ((line = br.readLine()) != null) {
                 line = line.trim();
-                // Ignorar líneas vacías o comentarios
+                // Skip empty lines or comments
                 if (line.isEmpty() || line.startsWith("--")) {
                     continue;
                 }
-                // Procesar departamentos
+                // Process department lines
                 if (line.startsWith("department(")) {
-                    // Ejemplo: department(10,Contabilidad,Madrid)
                     int start = line.indexOf('(');
                     int end = line.lastIndexOf(')');
                     if (start != -1 && end != -1) {
                         String content = line.substring(start + 1, end);
                         String[] parts = content.split(",");
-                        if (parts.length >= 2) {
+                        if (parts.length >= 3) {
                             int id = Integer.parseInt(parts[0].trim());
                             String name = parts[1].trim();
                             String city = parts[2].trim();
-                            // Se ignora la ciudad (parts[2])
-                            departments.add(new Department(id, name,city));
+                            departments.add(new Department(id, name, city));
                         }
                     }
                 }
-                // Procesar empleados
-                else if (line.startsWith("employee(")) {
-                    // employee(1,García,Dependiente,20)
+            }
+            // Restart the BufferedReader to load employees
+            br.close();
+            BufferedReader br2 = new BufferedReader(new FileReader(filePath));
+            while ((line = br2.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty() || line.startsWith("--")) {
+                    continue;
+                }
+                // Process employee lines
+                if (line.startsWith("employee(")) {
                     int start = line.indexOf('(');
                     int end = line.lastIndexOf(')');
                     if (start != -1 && end != -1) {
@@ -61,33 +92,45 @@ public class TextFileDAO implements IDAO {
                         String[] parts = content.split(",");
                         if (parts.length >= 4) {
                             int id = Integer.parseInt(parts[0].trim());
-                            String surname = parts[1].trim(); // Se mapea a firstName
-                            String job = parts[2].trim();     // Se mapea a lastName
+                            String surname = parts[1].trim(); // mapped to name
+                            String job = parts[2].trim();
                             int depId = Integer.parseInt(parts[3].trim());
-                            employees.add(new Employee(id, surname, job, depId));
+                            // Find the corresponding Department object
+                            Department dept = findDepartmentById(depId);
+                            // If not found, create a default department and add it to the list
+                            if (dept == null) {
+                                dept = new Department(depId, "Nameless", "NoLocation");
+                                departments.add(dept);
+                            }
+                            employees.add(new Employee(id, surname, job, dept));
                         }
                     }
                 }
             }
+            br2.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    //Escribir (gualdar) los datos al fichero
+    /**
+     * Saves the current data from the in-memory lists to the file.
+     * <p>
+     * The file is overwritten with the current department and employee data.
+     * </p>
+     */
     private void saveData() {
         try (PrintWriter pw = new PrintWriter(new FileWriter(filePath))) {
-            // Escribir cabecera de departamentos
-            pw.println("-- Adaptado del anexo 7 del libro Acceso a datos con IntelliJ IDEA (2ª ed.) de José Ramón García Sevilla.");
+            // Write departments header
             pw.println("-- departments: department(id,name,city).");
             for (Department d : departments) {
-                // Para el campo ciudad se usa un valor por defecto (por ejemplo, "SinCiudad")
-                pw.println("department(" + d.getId() + "," + d.getName() + ",SinCiudad)");
+                pw.println("department(" + d.getId() + "," + d.getName() + "," + d.getLocation() + ")");
             }
-            pw.println(); // Línea en blanco
+            pw.println(); // Blank line
             pw.println("-- employees: employee(id,surname,job,department_id).");
             for (Employee e : employees) {
-                pw.println("employee(" + e.getId() + "," + e.getName() + "," + e.getJob() + "," + e.getDeptId() + ")");
+                // Extract the department id from the Department object
+                pw.println("employee(" + e.getId() + "," + e.getName() + "," + e.getJob() + "," + e.getDepartment().getId() + ")");
             }
             pw.flush();
         } catch (IOException e) {
@@ -95,13 +138,24 @@ public class TextFileDAO implements IDAO {
         }
     }
 
-    // Implementacion de los metodos de la interfaz DAO.IDAO para EMPLEADOS
+    // IDAO Interface Methods for EMPLOYEES
 
+    /**
+     * Retrieves all employees.
+     *
+     * @return a list of {@link Employee} objects.
+     */
     @Override
     public List<Employee> findAllEmployees() {
         return new ArrayList<>(employees);
     }
 
+    /**
+     * Finds an employee by its ID.
+     *
+     * @param id the employee's identifier.
+     * @return the {@link Employee} if found, or {@code null} otherwise.
+     */
     @Override
     public Employee findEmployeeById(Object id) {
         int empId = (int) id;
@@ -113,31 +167,128 @@ public class TextFileDAO implements IDAO {
         return null;
     }
 
+    /**
+     * Adds a new employee.
+     * <p>
+     * Checks if an employee with the same ID already exists and if the referenced department exists.
+     * If the checks pass, the employee is added to the list and data is saved to the file.
+     * </p>
+     *
+     * @param employee the {@link Employee} to add.
+     */
     @Override
     public void addEmployee(Employee employee) {
-        // Comprobar que el departamento existe
+        // Check if an employee with the same ID already exists
+        for (Employee e : employees) {
+            if (e.getId() == employee.getId()) {
+                System.out.println("An employee with the ID already exists: " + employee.getId());
+                return;
+            }
+        }
+        // Check if the department exists
         boolean deptExists = false;
         for (Department d : departments) {
-            if (d.getId() == employee.getDeptId()) {
+            if (d.getId() == employee.getDepartment().getId()) {
                 deptExists = true;
                 break;
             }
         }
         if (!deptExists) {
-            System.out.println("No existe el departamento con id: " + employee.getDeptId());
+            System.out.println("The department with id " + employee.getDepartment().getId() + " does not exist.");
             return;
         }
         employees.add(employee);
         saveData();
     }
-// todo solicitar al usuario que quiere cambiar y gestionarlo.
+
+    /**
+     * Updates an existing employee.
+     * <p>
+     * Displays an interactive menu to select which field(s) to update:
+     * <ul>
+     *   <li>1 - Name</li>
+     *   <li>2 - Job</li>
+     *   <li>3 - Department</li>
+     *   <li>4 - All fields</li>
+     * </ul>
+     * </p>
+     *
+     * @param id the identifier of the employee to update.
+     * @return the updated {@link Employee} object, or {@code null} if not found or if update is canceled.
+     */
     @Override
     public Employee updateEmployee(Object id) {
         int empId = (int) id;
+        Scanner scanner = new Scanner(System.in);
         for (Employee e : employees) {
             if (e.getId() == empId) {
-                // Por ejemplo, actualizamos el campo job (lastName) a "Actualizado"
-                e.setLastName("Actualizado");
+                System.out.println("Select the field to update for the employee:");
+                System.out.println("1. Name");
+                System.out.println("2. Job");
+                System.out.println("3. Department");
+                System.out.println("4. All fields");
+                System.out.print("Option: ");
+                int option;
+                try {
+                    option = Integer.parseInt(scanner.nextLine());
+                } catch (NumberFormatException ex) {
+                    System.out.println("Error: Option must be an integer.");
+                    return null;
+                }
+
+                switch (option) {
+                    case 1:
+                        System.out.print("Enter the new name: ");
+                        String newName = scanner.nextLine();
+                        e.setName(newName);
+                        break;
+                    case 2:
+                        System.out.print("Enter the new job: ");
+                        String newJob = scanner.nextLine();
+                        e.setJob(newJob);
+                        break;
+                    case 3:
+                        System.out.print("Enter the new department id: ");
+                        int newDepId;
+                        try {
+                            newDepId = Integer.parseInt(scanner.nextLine());
+                        } catch (NumberFormatException ex) {
+                            System.out.println("Error: Department id must be an integer.");
+                            return null;
+                        }
+                        Department newDept = findDepartmentById(newDepId);
+                        if (newDept == null) {
+                            System.out.println("Department not found.");
+                            return null;
+                        }
+                        e.setDepartment(newDept);
+                        break;
+                    case 4:
+                        System.out.print("Enter the new name: ");
+                        String allName = scanner.nextLine();
+                        System.out.print("Enter the new job: ");
+                        String allJob = scanner.nextLine();
+                        System.out.print("Enter the new department id: ");
+                        int allDepId;
+                        try {
+                            allDepId = Integer.parseInt(scanner.nextLine());
+                        } catch (NumberFormatException ex) {
+                            System.out.println("Error: Department id must be an integer.");
+                            return null;
+                        }
+                        Department allDept = findDepartmentById(allDepId);
+                        if (allDept == null) {
+                            System.out.println("Department not found.");
+                            return null;
+                        }
+                        e.setName(allName);
+                        e.setJob(allJob);
+                        e.setDepartment(allDept);
+                        break;
+                    default:
+                        System.out.println("Invalid option.");
+                        return null;
+                }
                 saveData();
                 return e;
             }
@@ -145,6 +296,12 @@ public class TextFileDAO implements IDAO {
         return null;
     }
 
+    /**
+     * Deletes an employee.
+     *
+     * @param id the identifier of the employee to delete.
+     * @return {@code true} if deletion was successful; {@code false} otherwise.
+     */
     @Override
     public boolean deleteEmployee(Object id) {
         int empId = (int) id;
@@ -163,25 +320,42 @@ public class TextFileDAO implements IDAO {
         return false;
     }
 
+    /**
+     * Finds all employees belonging to a specific department.
+     *
+     * @param idDept the department identifier.
+     * @return a list of {@link Employee} objects belonging to that department.
+     */
     @Override
     public List<Employee> findEmployeesByDept(Object idDept) {
         int depId = (int) idDept;
         List<Employee> result = new ArrayList<>();
         for (Employee e : employees) {
-            if (e.getDeptId() == depId) {
+            if (e.getDepartment().getId() == depId) {
                 result.add(e);
             }
         }
         return result;
     }
 
-    // Implementasion de los métodos de la interfaz DAO.IDAO para DEPARTAMENTOS
+    // IDAO Interface Methods for DEPARTMENTS
 
+    /**
+     * Retrieves all departments.
+     *
+     * @return a list of {@link Department} objects.
+     */
     @Override
     public List<Department> findAllDepartments() {
         return new ArrayList<>(departments);
     }
 
+    /**
+     * Finds a department by its ID.
+     *
+     * @param id the department identifier.
+     * @return the {@link Department} object if found; {@code null} otherwise.
+     */
     @Override
     public Department findDepartmentById(Object id) {
         int depId = (int) id;
@@ -193,9 +367,18 @@ public class TextFileDAO implements IDAO {
         return null;
     }
 
+    /**
+     * Adds a new department.
+     * <p>
+     * Checks that no department with the same id already exists. If the check passes,
+     * the department is added and data is saved to the file.
+     * </p>
+     *
+     * @param department the {@link Department} to add.
+     * @return {@code true} if the insertion was successful; {@code false} otherwise.
+     */
     @Override
     public boolean addDepartment(Department department) {
-        // Comprobar que no exista ya un departamento con ese id
         for (Department d : departments) {
             if (d.getId() == department.getId()) {
                 return false;
@@ -206,13 +389,57 @@ public class TextFileDAO implements IDAO {
         return true;
     }
 
+    /**
+     * Updates an existing department.
+     * <p>
+     * Displays an interactive menu to update:
+     * <ul>
+     *   <li>1 - Name</li>
+     *   <li>2 - City</li>
+     *   <li>3 - Both</li>
+     * </ul>
+     * </p>
+     *
+     * @param id the identifier of the department to update.
+     * @return the updated {@link Department} object or {@code null} if not found or update is canceled.
+     */
     @Override
     public Department updateDepartment(Object id) {
         int depId = (int) id;
+        Scanner scanner = new Scanner(System.in);
         for (Department d : departments) {
             if (d.getId() == depId) {
-                // Por exemplo actualizamos el nombre a "DeptAct"
-                d.setName("DeptAct");
+                System.out.println("Select the field to update for the department:");
+                System.out.println("1. Name");
+                System.out.println("2. City");
+                System.out.println("3. Both");
+                System.out.print("Option: ");
+                int option = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+
+                switch (option) {
+                    case 1:
+                        System.out.print("Enter the new name: ");
+                        String newName = scanner.nextLine();
+                        d.setName(newName);
+                        break;
+                    case 2:
+                        System.out.print("Enter the new city: ");
+                        String newCity = scanner.nextLine();
+                        d.setLocation(newCity);
+                        break;
+                    case 3:
+                        System.out.print("Enter the new name: ");
+                        String allName = scanner.nextLine();
+                        System.out.print("Enter the new city: ");
+                        String allCity = scanner.nextLine();
+                        d.setName(allName);
+                        d.setLocation(allCity);
+                        break;
+                    default:
+                        System.out.println("Invalid option.");
+                        return null;
+                }
                 saveData();
                 return d;
             }
@@ -220,7 +447,16 @@ public class TextFileDAO implements IDAO {
         return null;
     }
 
-    // todo si tiene empleados , no se borra el departamento.
+    /**
+     * Deletes a department.
+     * <p>
+     * The department is deleted if it exists and if there are no employees assigned to it.
+     * Otherwise, it returns {@code null}.
+     * </p>
+     *
+     * @param id the identifier of the department to delete.
+     * @return the deleted {@link Department} object, or {@code null} if not found or deletion is not allowed.
+     */
     @Override
     public Department deleteDepartment(Object id) {
         int depId = (int) id;
@@ -232,9 +468,19 @@ public class TextFileDAO implements IDAO {
             }
         }
         if (toRemove != null) {
+            // Optional: Check if there are employees assigned to the department
+            boolean hasEmployees = false;
+            for (Employee e : employees) {
+                if (e.getDepartment().getId() == depId) {
+                    hasEmployees = true;
+                    break;
+                }
+            }
+            if (hasEmployees) {
+                System.out.println("Department cannot be deleted; it has employees assigned to it.");
+                return null;
+            }
             departments.remove(toRemove);
-            //  podemos eliminar los empleados asociados a ese departamento
-            employees.removeIf(e -> e.getDeptId() == depId);
             saveData();
         }
         return toRemove;
