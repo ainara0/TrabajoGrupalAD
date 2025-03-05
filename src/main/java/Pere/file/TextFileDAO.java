@@ -1,4 +1,4 @@
-package Pere.jdbc;
+package Pere.file;
 
 import DAO.Department;
 import DAO.Employee;
@@ -234,7 +234,7 @@ public class TextFileDAO implements IDAO {
         if (toRemove != null) {
             departments.remove(toRemove);
             //  podemos eliminar los empleados asociados a ese departamento
-            employees.removeIf(e -> e.getDepartmentId() == depId);
+            employees.removeIf(e -> e.getDeptId() == depId);
             saveData();
         }
         return toRemove;
