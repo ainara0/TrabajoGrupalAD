@@ -1,11 +1,11 @@
--- Adaptado del anexo 7 del libro Acceso a datos con IntelliJ IDEA (2ª ed.) de José Ramón García Sevilla.
 -- departments: department(id,name,city).
 department(10,Contabilidad,Madrid)
 department(20,Marketing,Barcelona)
 department(30,Ventas,Alicante)
 department(40,Logística,Valencia)
+
 -- employees: employee(id,surname,job,department_id).
-employee(1,García,Dependiente,20)
+employee(1,a,Dependiente,20)
 employee(2,López,Vendedor,30)
 employee(3,Pérez,Vendedor,30)
 employee(4,Gómez,Responsable,20)
@@ -19,3 +19,4 @@ employee(11,Rodríguez,Dependiente,20)
 employee(12,Ramírez,Dependiente,30)
 employee(13,González,Analista,20)
 employee(14,Hernández,Dependiente,10)
+employee(0,PapaNoel,Notieneesmoro,10)
