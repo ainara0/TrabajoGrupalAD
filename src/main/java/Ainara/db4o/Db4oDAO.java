@@ -13,29 +13,16 @@ import java.util.List;
 
 public class Db4oDAO implements Closeable, IDAO {
     ObjectContainer container;
+
+    public Db4oDAO() {
+    }
+
     public ObjectContainer getContainer() {
         return container;
     }
     public boolean connectToDatabase() {
         try {
-            container = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(),"football");
-        } catch (Exception e) {
-            return false;
-        }
-        return true;
-    }
-    public boolean store(Object o) {
-        try {
-            container.store(o);
-        } catch (Exception e) {
-            return false;
-        }
-        return true;
-
-    }
-    public boolean commit() {
-        try {
-            container.commit();
+            container = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(),"GroupProject");
         } catch (Exception e) {
             return false;
         }
@@ -43,14 +30,6 @@ public class Db4oDAO implements Closeable, IDAO {
     }
     public void close() { //TODO: tratar la excepción cuando se use
         container.close();
-    }
-    public boolean delete(Object o) {
-        try {
-            container.delete(o);
-        } catch (Exception e) {
-            return false;
-        }
-        return true;
     }
     @Override
     public List<Employee> findAllEmployees() {
@@ -63,7 +42,7 @@ public class Db4oDAO implements Closeable, IDAO {
 
     @Override
     public Employee findEmployeeById(Object id) {
-        if (!isNumeric(id)) { return null; }
+        if (!isNumeric(id)) {return null;}
         ObjectSet<Employee> result = container.query(new Predicate<>() {
             public boolean match(Employee employee) {
                 return employee.getId() == Integer.parseInt(id.toString());
@@ -82,9 +61,7 @@ public class Db4oDAO implements Closeable, IDAO {
 
     @Override
     public Employee updateEmployee(Object employeeObject) {
-        if (!(employeeObject instanceof Employee employee)) {
-            return null;
-        }
+        if (!(employeeObject instanceof Employee employee)) {return null;}
         try {
             container.store(employee);
         } catch (Exception e) {
@@ -139,9 +116,7 @@ public class Db4oDAO implements Closeable, IDAO {
 
     @Override
     public Department updateDepartment(Object departmentObject) {
-        if (!(departmentObject instanceof Department department)) {
-            return null;
-        }
+        if (!(departmentObject instanceof Department department)) {return null;}
         try {
             container.store(department);
         } catch (Exception e) {
