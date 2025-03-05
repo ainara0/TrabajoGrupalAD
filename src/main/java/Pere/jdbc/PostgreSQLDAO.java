@@ -7,13 +7,14 @@ import DAO.IDAO;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class PostgreSQLDAO implements IDAO {
 
     // Parametros de conexión a la base de datos PostgreSQL
-    private final String url = "jdbc:postgresql://localhost:5432/empresa";
-    private final String user = "postgres";
-    private final String password = "patata";
+    private final String url = "jdbc:postgresql://pm0002.conectabalear.net:5432/empresa";
+    private final String user = "test";
+    private final String password = "contraseña_segura_patata_12112";
 
     //Para la conecxion
     private Connection getConnection() throws SQLException {
@@ -34,7 +35,7 @@ public class PostgreSQLDAO implements IDAO {
                         rs.getInt("empno"),
                         rs.getString("nombre"),
                         rs.getString("puesto"),
-                        rs.getInt("depno")
+                        new Department(rs.getInt("depno"), null, null)
                 );
                 employees.add(emp);
             }
@@ -58,7 +59,7 @@ public class PostgreSQLDAO implements IDAO {
                         rs.getInt("empno"),
                         rs.getString("nombre"),
                         rs.getString("puesto"),
-                        rs.getInt("depno")
+                        new Department(rs.getInt("depno"), null, null)
                 );
             }
         } catch (SQLException e) {
@@ -70,7 +71,6 @@ public class PostgreSQLDAO implements IDAO {
 
     @Override
     public void addEmployee(Employee employee) {
-        // Se insertan empno, nombre, puesto y depno (salary no existe en la BD)
         String sql = "INSERT INTO empleado (empno, nombre, puesto, depno) VALUES (?, ?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -78,31 +78,71 @@ public class PostgreSQLDAO implements IDAO {
             pstmt.setInt(1, employee.getId());
             pstmt.setString(2, employee.getName());
             pstmt.setString(3, employee.getJob());
-            pstmt.setInt(4, employee.getDeptId());
+            pstmt.setInt(4, employee.getDepartment().getId());
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            if ("23503".equals(e.getSQLState())) { // Código de violación de clave foránea en PostgreSQL
+                System.out.println("Error: El departamento especificado no existe. Por favor, inserte primero el departamento correspondiente.");
+            } else {
+                e.printStackTrace();
+            }
         }
     }
 
+
     @Override
     public Employee updateEmployee(Object id) {
+        // Usamos Scanner para leer la opción del usuario
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Seleccione el campo a actualizar:");
+        System.out.println("1. Nombre");
+        System.out.println("2. Puesto");
+        System.out.println("3. Departamento (depno)");
+        System.out.print("Opción: ");
+        int opcion = scanner.nextInt();
+        scanner.nextLine(); // Consumir salto de línea
+
+        String campo = "";
+        switch (opcion) {
+            case 1:
+                campo = "nombre";
+                break;
+            case 2:
+                campo = "puesto";
+                break;
+            case 3:
+                campo = "depno";
+                break;
+            default:
+                System.out.println("Opción inválida.");
+                return null;
+        }
+
+        System.out.print("Ingrese el nuevo valor para " + campo + ": ");
+        String nuevoValor = scanner.nextLine();
+
+        // Construimos la sentencia SQL de forma dinámica según el campo a actualizar
+        String sql = "UPDATE empleado SET " + campo + " = ? WHERE empno = ? RETURNING empno, nombre, puesto, depno";
         Employee emp = null;
-        // Actualizamos el puesto a un valor fijo (por ejemplo, "Actualizado")
-        String sql = "UPDATE empleado SET puesto = ? WHERE empno = ? RETURNING empno, nombre, puesto, depno";
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            String nuevoPuesto = "Actualizado"; // Valor de ejemplo
-            pstmt.setString(1, nuevoPuesto);
+            // Si se actualiza el departamento se debe convertir a entero
+            if (campo.equals("depno")) {
+                pstmt.setInt(1, Integer.parseInt(nuevoValor));
+            } else {
+                pstmt.setString(1, nuevoValor);
+            }
             pstmt.setInt(2, (int) id);
+
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
+                // Dado que Employee espera un objeto Department, lo instanciamos con el id obtenido
                 emp = new Employee(
                         rs.getInt("empno"),
                         rs.getString("nombre"),
                         rs.getString("puesto"),
-                        rs.getInt("depno")
+                        new Department(rs.getInt("depno"), null, null)
                 );
             }
         } catch (SQLException e) {
@@ -110,6 +150,7 @@ public class PostgreSQLDAO implements IDAO {
         }
         return emp;
     }
+
 
     @Override
     public boolean deleteEmployee(Object id) {
@@ -141,7 +182,7 @@ public class PostgreSQLDAO implements IDAO {
                         rs.getInt("empno"),
                         rs.getString("nombre"),
                         rs.getString("puesto"),
-                        rs.getInt("depno")
+                        new Department(rs.getInt("depno"), null, null)
                 );
                 employees.add(emp);
             }
@@ -151,11 +192,10 @@ public class PostgreSQLDAO implements IDAO {
         return employees;
     }
 
-    // METODOS PARA el DEPARTAMENTO (tabla "departamento")
     @Override
     public List<Department> findAllDepartments() {
         List<Department> departments = new ArrayList<>();
-        String sql = "SELECT depno, nombre FROM departamento";
+        String sql = "SELECT depno, nombre, ubicacion FROM departamento";
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -174,10 +214,13 @@ public class PostgreSQLDAO implements IDAO {
         return departments;
     }
 
+
+
     @Override
     public Department findDepartmentById(Object id) {
         Department dept = null;
-        String sql = "SELECT depno, nombre FROM departamento WHERE depno = ?";
+        String sql = "SELECT depno, nombre, ubicacion FROM departamento WHERE depno = ?";
+
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -218,13 +261,59 @@ public class PostgreSQLDAO implements IDAO {
     @Override
     public Department updateDepartment(Object id) {
         Department dept = null;
-        String sql = "UPDATE departamento SET nombre = ? WHERE depno = ? RETURNING depno, nombre";
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Seleccione el campo a actualizar:");
+        System.out.println("1. Nombre");
+        System.out.println("2. Ubicación");
+        System.out.println("3. Ambos");
+        System.out.print("Opción: ");
+        int opcion = scanner.nextInt();
+        scanner.nextLine(); // Consumir salto de línea
+
+        String sql = "";
+        switch (opcion) {
+            case 1:
+                sql = "UPDATE departamento SET nombre = ? WHERE depno = ? RETURNING depno, nombre, ubicacion";
+                break;
+            case 2:
+                sql = "UPDATE departamento SET ubicacion = ? WHERE depno = ? RETURNING depno, nombre, ubicacion";
+                break;
+            case 3:
+                sql = "UPDATE departamento SET nombre = ?, ubicacion = ? WHERE depno = ? RETURNING depno, nombre, ubicacion";
+                break;
+            default:
+                System.out.println("Opción inválida.");
+                return null;
+        }
+
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            String nuevoNombre = "DeptActual"; // Valor de ejemplo que cumple con varchar(14)
-            pstmt.setString(1, nuevoNombre);
-            pstmt.setInt(2, (int) id);
+            switch (opcion) {
+                case 1:
+                    System.out.print("Ingrese el nuevo nombre: ");
+                    String nuevoNombre = scanner.nextLine();
+                    pstmt.setString(1, nuevoNombre);
+                    pstmt.setInt(2, (int) id);
+                    break;
+                case 2:
+                    System.out.print("Ingrese la nueva ubicación: ");
+                    String nuevaUbicacion = scanner.nextLine();
+                    pstmt.setString(1, nuevaUbicacion);
+                    pstmt.setInt(2, (int) id);
+                    break;
+                case 3:
+                    System.out.print("Ingrese el nuevo nombre: ");
+                    String nombre = scanner.nextLine();
+                    System.out.print("Ingrese la nueva ubicación: ");
+                    String ubicacion = scanner.nextLine();
+                    pstmt.setString(1, nombre);
+                    pstmt.setString(2, ubicacion);
+                    pstmt.setInt(3, (int) id);
+                    break;
+            }
+
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 dept = new Department(
@@ -240,6 +329,8 @@ public class PostgreSQLDAO implements IDAO {
     }
 
 
+
+    //todo mirar si tiene empleado y si no tiene eliminarlo
     @Override
     public Department deleteDepartment(Object id) {
         Department dept = findDepartmentById(id);
