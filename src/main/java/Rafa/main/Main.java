@@ -42,6 +42,7 @@ public class Main {
                 option = Utils.Ask.askForNumber(0, 11);
                 if (option == 0) {
                     System.out.print("____________________________________\n");
+                    System.out.println("a");
                 }
                 switch (option) {
                     case 1 -> dao.findAllEmployees().forEach(System.out::println);
