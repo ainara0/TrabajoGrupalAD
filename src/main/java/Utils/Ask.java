@@ -21,11 +21,11 @@ public class Ask {
 
         String input = scanner.nextLine();
         if (!isNumeric(input)) {
-            System.out.println("Input is not a number. Try again.");
+            System.out.println("\n No has introducido un número, Prueba de nuevo.");
         } else {
             int number = Integer.parseInt(input);
             if (!((number > (min - 1)) && (number < (max + 1)))) {
-                System.out.println("Input is not a valid number. Try again.");
+                System.out.println("\n No es un numero válido. Prueba de nuevo.");
             } else {
                 return number;
             }
