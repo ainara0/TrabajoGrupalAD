@@ -15,7 +15,7 @@ public class MongoDBDAO implements Closeable, IDAO {
     static MongoClient mongoClient;
     static MongoDatabase db;
 
-    MongoDBDAO() {
+    public MongoDBDAO() {
         String connectionString = "mongodb+srv://admin:0000@cluster0.0pqj1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
         mongoClient = MongoClients.create(connectionString);
         db = mongoClient.getDatabase("GroupProject");
