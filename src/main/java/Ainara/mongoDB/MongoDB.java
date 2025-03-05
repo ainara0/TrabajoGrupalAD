@@ -11,11 +11,11 @@ import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Connection implements Closeable, IDAO {
+public class MongoDB implements Closeable, IDAO {
     static MongoClient mongoClient;
     static MongoDatabase db;
 
-    private Connection() {
+    private MongoDB() {
         String connectionString = "mongodb+srv://admin:0000@cluster0.0pqj1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
         mongoClient = MongoClients.create(connectionString);
         db = mongoClient.getDatabase("GroupProject");
@@ -63,8 +63,8 @@ public class Connection implements Closeable, IDAO {
 
     @Override
     public Employee findEmployeeById(Object id) {
-        MongoCollection<Document> matchesCollection = db.getCollection("Employee");
-        try (MongoCursor<Document> cursor = matchesCollection.find(Filters.eq("_id", id)).iterator()) {
+        MongoCollection<Document> departmentsCollection = db.getCollection("Employee");
+        try (MongoCursor<Document> cursor = departmentsCollection.find(Filters.eq("_id", id)).iterator()) {
             if (cursor.hasNext()) {
                 Document document = cursor.next();
                 return toEmployee(document);
@@ -74,21 +74,26 @@ public class Connection implements Closeable, IDAO {
     }
 
     @Override
-    public Employee updateEmployee(Object id) {
+    public Employee updateEmployee(Object employeeObject) {
+        if (!(employeeObject instanceof Employee employee)) {
+            return null;
+        }
         MongoCollection<Document> employeesCollection = db.getCollection("Employee");
-        Bson query = Filters.eq("_id",employee.getId());
+        Bson query = Filters.eq("_id", employee.getId());
         Bson updates = Updates.combine(
                 Updates.set("name", employee.getName()),
                 Updates.set("job", employee.getJob()),
-                Updates.set("department_id", employee.getDeptId())
+                Updates.set("department_id", employee.getDepartment().getId())
         );
-        employeesCollection.findOneAndUpdate(query,updates);
+        Document updatedEmployee = employeesCollection.findOneAndUpdate(query,updates);
+        return updatedEmployee != null ? toEmployee(updatedEmployee) : null;
     }
 
     @Override
     public boolean deleteEmployee(Object id) {
-        MongoCollection<Document> matchesCollection = db.getCollection("Employee");
-        matchesCollection.findOneAndDelete(Filters.eq("_id", employee.getId()));
+        MongoCollection<Document> employeesCollection = db.getCollection("Employee");
+        Document employee = employeesCollection.findOneAndDelete(Filters.eq("_id", id));
+        return employee != null;
     }
 
     @Override
@@ -106,39 +111,38 @@ public class Connection implements Closeable, IDAO {
 
     @Override
     public Department findDepartmentById(Object id) {
-        MongoCollection<Document> matchesCollection = db.getCollection("Department");
-
-        Document departmentDocument = matchesCollection.find(Filters.eq("_id", id)).first();
-
-        if (departmentDocument != null) {
-            return toDepartment(departmentDocument);
-        } else {
-            return null;
-        }
+        MongoCollection<Document> departmentsCollections = db.getCollection("Department");
+        Document departmentDocument = departmentsCollections.find(Filters.eq("_id", id)).first();
+        return departmentDocument != null ? toDepartment(departmentDocument) : null;
     }
 
     @Override
-    public Department updateDepartment(Object id) {
+    public Department updateDepartment(Object departmentObject) {
+        if (!(departmentObject instanceof Department department)) {
+            return null;
+        }
         MongoCollection<Document> departmentsCollection = db.getCollection("Department");
-        Bson query = Filters.eq("_id",department.getId());
+        Bson query = Filters.eq("_id", department.getId());
         Bson updates = Updates.combine(
                 Updates.set("first_name", department.getName()),
                 Updates.set("location", department.getLocation())
         );
-        departmentsCollection.findOneAndUpdate(query,updates);
+        Document updatedDepartment = departmentsCollection.findOneAndUpdate(query,updates);
+        return updatedDepartment != null ? toDepartment(updatedDepartment) : null;
     }
 
     @Override
     public Department deleteDepartment(Object id) {
-        MongoCollection<Document> matchesCollection = db.getCollection("Department");
-        matchesCollection.findOneAndDelete(Filters.eq("_id", department.getId()));
+        MongoCollection<Document> departmentsCollection = db.getCollection("Department");
+        Document department = departmentsCollection.findOneAndDelete(Filters.eq("_id", id));
+        return department != null ? toDepartment(department) : null;
     }
 
     @Override
     public List<Employee> findEmployeesByDept(Object idDept) {
         MongoCollection<Document> employeesCollection = db.getCollection("Employee");
         List<Employee> employees = new ArrayList<>();
-        Bson query = Filters.eq("department_id",id);
+        Bson query = Filters.eq("department_id",idDept);
         try (MongoCursor<Document> cursor = employeesCollection.find(query).iterator()) {
             while (cursor.hasNext()) {
                 Document document = cursor.next();
@@ -148,21 +152,20 @@ public class Connection implements Closeable, IDAO {
         return employees;
     }
 
-
-    private static Department toDepartment(Document document) {
+    private Department toDepartment(Document document) {
         return new Department(
                 document.getInteger("_id"),
                 document.getString("name"),
                 document.getString("location")
         );
     }
-    private static Employee toEmployee(Document document) {
+
+    private Employee toEmployee(Document document) {
         return new Employee(
                 document.getInteger("_id"),
                 document.getString("name"),
                 document.getString("job"),
-                document.getInteger("department_id")
+                findDepartmentById(document.getInteger("department_id"))
         );
     }
-
 }
