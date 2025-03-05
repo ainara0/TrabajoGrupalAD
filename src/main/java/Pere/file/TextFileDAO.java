@@ -99,7 +99,7 @@ public class TextFileDAO implements IDAO {
                             Department dept = findDepartmentById(depId);
                             // If not found, create a default department and add it to the list
                             if (dept == null) {
-                                dept = new Department(depId, "Nameless", "NoLocation");
+                                dept = new Department(depId, "NoNombre", "NoLocacion");
                                 departments.add(dept);
                             }
                             employees.add(new Employee(id, surname, job, dept));

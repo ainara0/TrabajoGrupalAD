@@ -135,60 +135,130 @@ public class PostgreSQLDAO implements IDAO {
      */
     @Override
     public Employee updateEmployee(Object id) {
+        int empId = (int) id;
+        Employee employee = null;
+
+        // 1. Verificar en la base de datos si el empleado existe
+        String sqlSelect = "SELECT empno, nombre, puesto, depno FROM empleado WHERE empno = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement pstmtSelect = conn.prepareStatement(sqlSelect)) {
+
+            pstmtSelect.setInt(1, empId);
+            try (ResultSet rs = pstmtSelect.executeQuery()) {
+                if (rs.next()) {
+                    // Si se encuentra el empleado, se instancia y se cargan sus datos
+                    employee = new Employee();
+                    employee.setId(rs.getInt("empno"));
+                    employee.setName(rs.getString("nombre"));
+                    employee.setJob(rs.getString("puesto"));
+                    int depId = rs.getInt("depno");
+                    Department dept = findDepartmentById(depId);
+                    employee.setDepartment(dept);
+                } else {
+                    System.out.println("El empleado no existe en la base de datos.");
+                    return null;
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+
+        // 2. Solicitar al usuario qué campo desea actualizar
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Seleccione el campo a actualizar:");
+        System.out.println("Seleccione el campo que desea actualizar para el empleado:");
         System.out.println("1. Nombre");
         System.out.println("2. Trabajo");
-        System.out.println("3. Depatamento");
-        System.out.print("Opcion: ");
-        int option = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
+        System.out.println("3. Departamento");
+        System.out.println("4. Todos los campos");
+        System.out.print("Opciones: ");
+        int option;
+        try {
+            option = Integer.parseInt(scanner.nextLine());
+        } catch (NumberFormatException ex) {
+            System.out.println("Error: La opción debe ser un número entero.");
+            return null;
+        }
 
-        String field = "";
+        // 3. Actualizar el objeto employee según la opción elegida
         switch (option) {
             case 1:
-                field = "nombre";
+                System.out.print("Introduzca el nuevo nombre: ");
+                String newName = scanner.nextLine();
+                employee.setName(newName);
                 break;
             case 2:
-                field = "puesto";
+                System.out.print("Introduzca el nuevo trabajo: ");
+                String newJob = scanner.nextLine();
+                employee.setJob(newJob);
                 break;
             case 3:
-                field = "depno";
+                System.out.print("Introduzca el nuevo ID del departamento: ");
+                int newDepId;
+                try {
+                    newDepId = Integer.parseInt(scanner.nextLine());
+                } catch (NumberFormatException ex) {
+                    System.out.println("Error: El ID del departamento debe ser un número entero.");
+                    return null;
+                }
+                Department newDept = findDepartmentById(newDepId);
+                if (newDept == null) {
+                    System.out.println("Departamento no encontrado.");
+                    return null;
+                }
+                employee.setDepartment(newDept);
+                break;
+            case 4:
+                System.out.print("Introduzca el nuevo nombre: ");
+                String allName = scanner.nextLine();
+                System.out.print("Introduzca el nuevo trabajo: ");
+                String allJob = scanner.nextLine();
+                System.out.print("Introduzca el nuevo ID del departamento: ");
+                int allDepId;
+                try {
+                    allDepId = Integer.parseInt(scanner.nextLine());
+                } catch (NumberFormatException ex) {
+                    System.out.println("Error: el ID del departamento debe ser un número entero.");
+                    return null;
+                }
+                Department allDept = findDepartmentById(allDepId);
+                if (allDept == null) {
+                    System.out.println("Departamento no encontrado.");
+                    return null;
+                }
+                employee.setName(allName);
+                employee.setJob(allJob);
+                employee.setDepartment(allDept);
                 break;
             default:
-                System.out.println("Invalida opcion.");
+                System.out.println("Opción inválida.");
                 return null;
         }
 
-        System.out.print("Introduzca el nuevo valor para " + field + ": ");
-        String newValue = scanner.nextLine();
-
-        String sql = "UPDATE empleado SET " + field + " = ? WHERE empno = ? RETURNING empno, nombre, puesto, depno";
-        Employee emp = null;
+        // 4. Actualizar la base de datos con los nuevos datos
+        String sqlUpdate = "UPDATE empleado SET nombre = ?, puesto = ?, depno = ? WHERE empno = ?";
         try (Connection conn = getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmtUpdate = conn.prepareStatement(sqlUpdate)) {
 
-            if (field.equals("depno")) {
-                pstmt.setInt(1, Integer.parseInt(newValue));
+            pstmtUpdate.setString(1, employee.getName());
+            pstmtUpdate.setString(2, employee.getJob());
+            pstmtUpdate.setInt(3, employee.getDepartment().getId());
+            pstmtUpdate.setInt(4, employee.getId());
+
+            int rowsAffected = pstmtUpdate.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Empleado actualizado correctamente en la base de datos.");
             } else {
-                pstmt.setString(1, newValue);
+                System.out.println("No se pudo actualizar el empleado.");
             }
-            pstmt.setInt(2, (int) id);
-
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                emp = new Employee(
-                        rs.getInt("empno"),
-                        rs.getString("nombre"),
-                        rs.getString("puesto"),
-                        new Department(rs.getInt("depno"), null, null)
-                );
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return null;
         }
-        return emp;
+
+        return employee;
     }
+
 
     /**
      * Deletes an employee from the database.
@@ -203,14 +273,20 @@ public class PostgreSQLDAO implements IDAO {
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
+            // Se establece el ID del empleado a eliminar.
             pstmt.setInt(1, (int) id);
+
+            // Ejecutamos la eliminasion y obtengo las filas que se han  cambiado
             int affectedRows = pstmt.executeUpdate();
+
+            //Si ha efectado al menos una fila entonces true
             deleted = affectedRows > 0;
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return deleted;
     }
+
 
     /**
      * Finds employees that belong to a specific department.
@@ -339,15 +415,33 @@ public class PostgreSQLDAO implements IDAO {
     @Override
     public Department updateDepartment(Object id) {
         Department dept = null;
-        Scanner scanner = new Scanner(System.in);
+        int departmentId = (int) id;
 
+        // 1. Verificar que el departamento existe en la base de datos
+        String sqlCheck = "SELECT depno FROM departamento WHERE depno = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement pstmtCheck = conn.prepareStatement(sqlCheck)) {
+            pstmtCheck.setInt(1, departmentId);
+            try (ResultSet rsCheck = pstmtCheck.executeQuery()) {
+                if (!rsCheck.next()) {
+                    System.out.println("El departamento no existe en la base de datos.");
+                    return null;
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+
+        // 2. Solicitar al usuario qué campo desea actualizar
+        Scanner scanner = new Scanner(System.in);
         System.out.println("Seleccione el campo a actualizar:");
         System.out.println("1. Nombre");
         System.out.println("2. Localidad");
         System.out.println("3. Ambas");
         System.out.print("Opcion: ");
         int option = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
+        scanner.nextLine(); // Consumir el salto de línea
 
         String sql = "";
         switch (option) {
@@ -361,10 +455,11 @@ public class PostgreSQLDAO implements IDAO {
                 sql = "UPDATE departamento SET nombre = ?, ubicacion = ? WHERE depno = ? RETURNING depno, nombre, ubicacion";
                 break;
             default:
-                System.out.println("Invalid option.");
+                System.out.println("Opción inválida.");
                 return null;
         }
 
+        // 3. Ejecutar la actualización
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -373,13 +468,13 @@ public class PostgreSQLDAO implements IDAO {
                     System.out.print("Introduce el nuevo nombre: ");
                     String newName = scanner.nextLine();
                     pstmt.setString(1, newName);
-                    pstmt.setInt(2, (int) id);
+                    pstmt.setInt(2, departmentId);
                     break;
                 case 2:
                     System.out.print("Introduce la nueva localidad: ");
                     String newLocation = scanner.nextLine();
                     pstmt.setString(1, newLocation);
-                    pstmt.setInt(2, (int) id);
+                    pstmt.setInt(2, departmentId);
                     break;
                 case 3:
                     System.out.print("Introduzca el nuevo nombre: ");
@@ -388,7 +483,7 @@ public class PostgreSQLDAO implements IDAO {
                     String location = scanner.nextLine();
                     pstmt.setString(1, name);
                     pstmt.setString(2, location);
-                    pstmt.setInt(3, (int) id);
+                    pstmt.setInt(3, departmentId);
                     break;
             }
 
@@ -403,8 +498,10 @@ public class PostgreSQLDAO implements IDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return dept;
     }
+
 
     /**
      * Deletes a department from the database.
