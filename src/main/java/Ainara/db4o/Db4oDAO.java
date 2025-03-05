@@ -81,13 +81,27 @@ public class Db4oDAO implements Closeable, IDAO {
     }
 
     @Override
-    public Employee updateEmployee(Object id) {
-        return null;
+    public Employee updateEmployee(Object employeeObject) {
+        if (!(employeeObject instanceof Employee employee)) {
+            return null;
+        }
+        try {
+            container.store(employee);
+        } catch (Exception e) {
+            return null;
+        }
+        return employee;
     }
 
     @Override
-    public boolean deleteEmployee(Object id) {
-        return false;
+    public boolean deleteEmployee(Object employeeObject) {
+        if (!(employeeObject instanceof Employee employee)) {return false;}
+        try {
+            container.delete(employee);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -101,7 +115,16 @@ public class Db4oDAO implements Closeable, IDAO {
 
     @Override
     public Department findDepartmentById(Object id) {
-        return null;
+        if (!isNumeric(id)) { return null; }
+        ObjectSet<Department> result = container.query(new Predicate<>() {
+            public boolean match(Department department) {
+                return department.getId() == Integer.parseInt(id.toString());
+            }
+        });
+        if (result.isEmpty()) {
+            return null;
+        }
+        return (result.getFirst());
     }
 
     @Override
@@ -115,18 +138,41 @@ public class Db4oDAO implements Closeable, IDAO {
     }
 
     @Override
-    public Department updateDepartment(Object id) {
-        return null;
+    public Department updateDepartment(Object departmentObject) {
+        if (!(departmentObject instanceof Department department)) {
+            return null;
+        }
+        try {
+            container.store(department);
+        } catch (Exception e) {
+            return null;
+        }
+        return department;
     }
 
     @Override
-    public Department deleteDepartment(Object id) {
-        return null;
+    public Department deleteDepartment(Object departmentObject) {
+        if (!(departmentObject instanceof Department department)) {return null;}
+        try {
+            container.delete(department);
+        } catch (Exception e) {
+            return null;
+        }
+        return department;
     }
 
     @Override
     public List<Employee> findEmployeesByDept(Object idDept) {
-        return List.of();
+        if (!isNumeric(idDept)) { return null; }
+        ObjectSet<Employee> result = container.query(new Predicate<>() {
+            public boolean match(Employee employee) {
+                return employee.getDepartment().getId() == Integer.parseInt(idDept.toString());
+            }
+        });
+        if (result.isEmpty()) {
+            return null;
+        }
+        return result.stream().toList();
     }
 
     private static boolean isNumeric(Object num) {
