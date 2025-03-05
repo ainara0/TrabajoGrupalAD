@@ -4,46 +4,71 @@ import DAO.Department;
 import DAO.Employee;
 import Rafa.main.HibernateMenu;
 import DAO.IDAO;
+import Utils.JpaConverter;
 import jakarta.persistence.EntityManager;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class HibernateDAO implements IDAO {
     SessionFactory sessionFactory = new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
     private EntityManager entityManager = sessionFactory.createEntityManager();
 
     @Override
-    public List<DAO.Employee> findAllEmployees() {
+    public List<Employee> findAllEmployees() {
         System.out.println("");
         System.out.println("Has escodigo la opcion de listar empleados");
         System.out.println("");
-        return entityManager.createQuery("SELECT e FROM Employee e", Employee.class).getResultList();
+        List<Employee> employees = new ArrayList<>();
+        List<EmployeeJPA> employeesJAR = entityManager.createQuery("SELECT e FROM EmployeeJPA e", EmployeeJPA.class).getResultList();
+        for (EmployeeJPA employeeJPA : employeesJAR) {
+            Employee employee = new Employee(
+                    employeeJPA.getId(),
+                    employeeJPA.getName(),
+                    employeeJPA.getJob(),
+                    JpaConverter.convertToEntity(employeeJPA.getDepno())
+
+            );
+            employees.add(employee);
+        }
+
+        return employees;
     }
 
     @Override
     public Employee findEmployeeById(Object id) {
-        return entityManager.find(Employee.class, id);
+        EmployeeJPA employeeJPA = entityManager.find(EmployeeJPA.class, id);
+
+        return new Employee(
+                employeeJPA.getId(),
+                employeeJPA.getName(),
+                employeeJPA.getJob(),
+                findDepartmentById(employeeJPA.getDepno().getId())
+        );
     }
 
     @Override
     public void addEmployee(Employee employee) {
+        EmployeeJPA employeeJPA = new EmployeeJPA(
+                employee.getName(),
+                employee.getJob(),
+                JpaConverter.convertToJPA(employee.getDepartment())
+        );
         entityManager.getTransaction().begin();
-        entityManager.persist(employee);
+        entityManager.persist(employeeJPA);
         entityManager.getTransaction().commit();
     }
 
 
     @Override
     public Employee updateEmployee(Object id) {
-        Scanner scanner = new Scanner(System.in);
         entityManager.getTransaction().begin();
 
-        Employee employee = entityManager.find(Employee.class, id);
+        EmployeeJPA employeeJpa = entityManager.find(EmployeeJPA.class, id);
 
-        if (employee == null) {
+        if (employeeJpa == null) {
             System.err.println("Empleado no encontrado.");
             entityManager.getTransaction().rollback();
             return null;
@@ -51,29 +76,23 @@ public class HibernateDAO implements IDAO {
 
         int option;
 
-        System.out.println("\n--- Actualizar Empleado ---");
-        System.out.println("1. Cambiar nombre");
-        System.out.println("2. Cambiar puesto");
-        System.out.println("3. Cambiar departamento");
-        System.out.println("4. Cambiar todo");
-        System.out.println("5. Atrás");
-        System.out.print("Seleccione una opción: ");
+        menuUpdateEmployee();
         option = HibernateMenu.askForNumber(1, 5);
 
         switch (option) {
             case 1 -> {
-                if (askForNameFromEmployee(employee)) return null;
+                if (askForNameFromEmployee(employeeJpa)) return null;
             }
             case 2 -> {
-                if (askForJobFromEmployee(employee)) return null;
+                if (askForJobFromEmployee(employeeJpa)) return null;
             }
             case 3 -> {
                 if (askForDepartmentFromEmployee()) return null;
             }
             case 4 -> {
-                if (askForNameFromEmployee(employee)) return null;
+                if (askForNameFromEmployee(employeeJpa)) return null;
 
-                if (askForJobFromEmployee(employee)) return null;
+                if (askForJobFromEmployee(employeeJpa)) return null;
 
                 if (askForDepartmentFromEmployee()) return null;
             }
@@ -85,17 +104,34 @@ public class HibernateDAO implements IDAO {
         }
 
 
-        entityManager.merge(employee);
+        entityManager.merge(employeeJpa);
         entityManager.getTransaction().commit();
         System.out.println("Empleado actualizado correctamente.");
 
-        return employee;
+        return new Employee(
+                employeeJpa.getId(),
+                employeeJpa.getName(),
+                employeeJpa.getJob(),
+                findDepartmentById(employeeJpa.getDepno().getId())
+        );
+    }
+
+    private static void menuUpdateEmployee() {
+        System.out.println("\n--- Actualizar Empleado ---");
+        System.out.println("1. Cambiar nombre");
+        System.out.println("2. Cambiar puesto");
+        System.out.println("3. Cambiar departamento");
+        System.out.println("4. Cambiar todo");
+        System.out.println("5. Atrás");
+        System.out.print("Seleccione una opción: ");
     }
 
     private boolean askForDepartmentFromEmployee() {
         System.out.print("Ingrese el id de departamento: ");
-        Department dept = findDepartmentById(HibernateMenu.askForNumber());
-        if (dept == null) {
+        int deptId = HibernateMenu.askForNumber();
+
+        DepartmentJPA deptJpa = entityManager.find(DepartmentJPA.class, deptId);
+        if (deptJpa == null) {
             System.err.println("Departamento no encontrado.");
             entityManager.getTransaction().rollback();
             return true;
@@ -103,7 +139,7 @@ public class HibernateDAO implements IDAO {
         return false;
     }
 
-    private boolean askForJobFromEmployee(Employee employee) {
+    private boolean askForJobFromEmployee(EmployeeJPA employee) {
         System.out.print("Ingrese el nuevo puesto: ");
         String job = HibernateMenu.askForString();
         if (job == null) {
@@ -114,7 +150,7 @@ public class HibernateDAO implements IDAO {
         return false;
     }
 
-    private boolean askForNameFromEmployee(Employee employee) {
+    private boolean askForNameFromEmployee(EmployeeJPA employee) {
         System.out.print("Ingrese el nuevo apellido: ");
         String name = HibernateMenu.askForString();
         if (name == null) {
@@ -142,12 +178,26 @@ public class HibernateDAO implements IDAO {
 
     @Override
     public List<Department> findAllDepartments() {
-        return entityManager.createQuery("SELECT d FROM Department d", Department.class).getResultList();
+        List<DepartmentJPA> departmentsJPA = entityManager.createQuery("SELECT e FROM DepartmentJPA e", DepartmentJPA.class).getResultList();
+        List<Department> departments = new ArrayList<>();
+        for (DepartmentJPA departmentJPA : departmentsJPA) {
+            departments.add(new Department(
+                    departmentJPA.getId(),
+                    departmentJPA.getName(),
+                    departmentJPA.getCity()
+            ));
+        }
+        return departments;
     }
 
     @Override
     public Department findDepartmentById(Object id) {
-        return entityManager.find(Department.class, id);
+        DepartmentJPA departmentJPA = entityManager.find(DepartmentJPA.class, id);
+        return new Department(
+                departmentJPA.getId(),
+                departmentJPA.getName(),
+                departmentJPA.getCity()
+        );
     }
 
     @Override
@@ -162,9 +212,9 @@ public class HibernateDAO implements IDAO {
     public Department updateDepartment(Object id) {
         entityManager.getTransaction().begin();
 
-        Department department = entityManager.find(Department.class, id);
+        DepartmentJPA departmentJPA = entityManager.find(DepartmentJPA.class, id);
 
-        if (department == null) {
+        if (departmentJPA == null) {
             System.err.println("Departamento no encontrado.");
             entityManager.getTransaction().rollback();
             return null;
@@ -184,20 +234,20 @@ public class HibernateDAO implements IDAO {
 
         switch (option) {
             case 1 -> {
-                askForIdFromDepartment(department);
+                askForIdFromDepartment(departmentJPA);
             }
             case 2 -> {
-                if (askForNameFromDepartment(department)) return null;
+                if (askForNameFromDepartment(departmentJPA)) return null;
             }
             case 3 -> {
-                if (askForCityFromDepartment(department)) return null;
+                if (askForCityFromDepartment(departmentJPA)) return null;
             }
             case 4 -> {
-                askForIdFromDepartment(department);
+                askForIdFromDepartment(departmentJPA);
 
-                if (askForNameFromDepartment(department)) return null;
+                if (askForNameFromDepartment(departmentJPA)) return null;
 
-                if (askForCityFromDepartment(department)) return null;
+                if (askForCityFromDepartment(departmentJPA)) return null;
             }
             case 5 -> {
                 System.out.println("Regresando al menú principal...");
@@ -208,25 +258,29 @@ public class HibernateDAO implements IDAO {
         }
 
 
-        entityManager.merge(department);
+        entityManager.merge(departmentJPA);
         entityManager.getTransaction().commit();
         System.out.println("Empleado actualizado correctamente.");
 
-        return department;
+        return new Department(
+                departmentJPA.getId(),
+                departmentJPA.getName(),
+                departmentJPA.getCity()
+        );
     }
 
-    private boolean askForCityFromDepartment(Department department) {
+    private boolean askForCityFromDepartment(DepartmentJPA department) {
         System.out.print("Ingrese la nueva ubicacion: ");
         String city = HibernateMenu.askForString();
         if (city == null) {
             entityManager.getTransaction().rollback();
             return true;
         }
-        department.setLocation(city);
+        department.setCity(city);
         return false;
     }
 
-    private boolean askForNameFromDepartment(Department department) {
+    private boolean askForNameFromDepartment(DepartmentJPA department) {
         System.out.print("Ingrese el nuevo nombre: ");
         String name = HibernateMenu.askForString();
         if (name == null) {
@@ -237,7 +291,7 @@ public class HibernateDAO implements IDAO {
         return false;
     }
 
-    private void askForIdFromDepartment(Department department) {
+    private void askForIdFromDepartment(DepartmentJPA department) {
         System.out.print("Ingrese el nuevo Id: ");
         int deptId = HibernateMenu.askForNumber();
         Department dept = findDepartmentById(deptId);
@@ -252,21 +306,35 @@ public class HibernateDAO implements IDAO {
     @Override
     public Department deleteDepartment(Object id) {
         entityManager.getTransaction().begin();
-        Department department = entityManager.find(Department.class, id);
-        if (department != null) {
-            entityManager.remove(department);
+        DepartmentJPA departmentJPA = entityManager.find(DepartmentJPA.class, id);
+        if (departmentJPA != null) {
+            entityManager.remove(departmentJPA);
             entityManager.getTransaction().commit();
-            return department;
+            return new Department(
+                    departmentJPA.getId(),
+                    departmentJPA.getName(),
+                    departmentJPA.getCity()
+            );
         }
         return null;
     }
 
     @Override
     public List<Employee> findEmployeesByDept(Object idDept) {
-
-        return entityManager.createQuery("SELECT e FROM Employee e WHERE e.depno.id = :deptId", Employee.class)
+        List<Employee> employees = new ArrayList<>();
+        List<EmployeeJPA> employeesJPA = entityManager.createQuery("SELECT e FROM EmployeeJPA e WHERE e.depno.id = :deptId", EmployeeJPA.class)
                 .setParameter("deptId", idDept)
                 .getResultList();
+    
+        for (EmployeeJPA employeeJPA : employeesJPA) {
+            employees.add(new Employee(
+                    employeeJPA.getId(),
+                    employeeJPA.getName(),
+                    employeeJPA.getJob(),
+                    findDepartmentById(employeeJPA.getDepno())
+            ));
+        }
+        return employees;
     }
 
 }
