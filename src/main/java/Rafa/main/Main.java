@@ -36,6 +36,7 @@ public class Main {
                 System.out.println(e.getMessage());
             }
         } while (!isFinished);
+
     }
 
     private void actionsMenu(IDAO dao) {
