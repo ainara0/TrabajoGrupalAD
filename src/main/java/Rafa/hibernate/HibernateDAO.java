@@ -10,11 +10,18 @@ import org.hibernate.cfg.Configuration;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * Implementation of the IDAO interface using Hibernate.
+ * Provides CRUD operations for Employee and Department entities.
+ */
 public class HibernateDAO implements IDAO {
     SessionFactory sessionFactory = new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
     private EntityManager entityManager = sessionFactory.createEntityManager();
 
+    /**
+     * Retrieves all employees from the database.
+     * @return A list of all employees.
+     */
     @Override
     public List<Employee> findAllEmployees() {
         System.out.println("");
@@ -34,6 +41,11 @@ public class HibernateDAO implements IDAO {
 
         return employees;
     }
+    /**
+     * Finds an employee by their ID.
+     * @param id The ID of the employee to be searched.
+     * @return The Employee object if found, otherwise null.
+     */
 
     @Override
     public Employee findEmployeeById(Object id) {
@@ -51,6 +63,10 @@ public class HibernateDAO implements IDAO {
         }
     }
 
+    /**
+     * Adds a new employee to the database.
+     * @param employee The employee to be added.
+     */
     @Override
     public void addEmployee(Employee employee) {
         EmployeeJPA employeeJPA = new EmployeeJPA(
@@ -63,7 +79,11 @@ public class HibernateDAO implements IDAO {
         entityManager.getTransaction().commit();
     }
 
-
+    /**
+     * Updates an existing employee's information.
+     * @param id The ID of the employee to be updated.
+     * @return The updated Employee object or null if not found.
+     */
     @Override
     public Employee updateEmployee(Object id) {
         entityManager.getTransaction().begin();
@@ -165,7 +185,11 @@ public class HibernateDAO implements IDAO {
         return false;
     }
 
-
+    /**
+     * Deletes an employee by their ID.
+     * @param id The ID of the employee to be deleted.
+     * @return True if the deletion was successful, otherwise false.
+     */
     @Override
     public boolean deleteEmployee(Object id) {
         entityManager.getTransaction().begin();
@@ -182,6 +206,10 @@ public class HibernateDAO implements IDAO {
         return false;
     }
 
+    /**
+     * Retrieves all departments from the database.
+     * @return A list of all departments.
+     */
     @Override
     public List<Department> findAllDepartments() {
         List<DepartmentJPA> departmentsJPA = entityManager.createQuery("SELECT e FROM DepartmentJPA e", DepartmentJPA.class).getResultList();
@@ -195,7 +223,11 @@ public class HibernateDAO implements IDAO {
         }
         return departments;
     }
-
+    /**
+     * Finds a department by its ID.
+     * @param id The ID of the department to be searched.
+     * @return The Department object if found, otherwise null.
+     */
     @Override
     public Department findDepartmentById(Object id) {
         DepartmentJPA departmentJPA = entityManager.find(DepartmentJPA.class, id);
@@ -211,6 +243,11 @@ public class HibernateDAO implements IDAO {
         }
     }
 
+    /**
+     * Adds a new department to the database.
+     * @param department The department to be added.
+     * @return True if the department was added successfully, false otherwise.
+     */
     @Override
     public boolean addDepartment(Department department) {
         DepartmentJPA departmentJPA = Utils.ConvertersJPA.convertToJPA(department);
@@ -225,6 +262,11 @@ public class HibernateDAO implements IDAO {
         }
     }
 
+    /**
+     * Updates an existing department's information.
+     * @param id The ID of the department to be updated.
+     * @return The updated Department object or null if not found.
+     */
     @Override
     public Department updateDepartment(Object id) {
         entityManager.getTransaction().begin();
@@ -318,7 +360,11 @@ public class HibernateDAO implements IDAO {
             return true;
         }
     }
-
+    /**
+     * Deletes a department by its ID.
+     * @param id The ID of the department to be deleted.
+     * @return The deleted Department object or null if not found.
+     */
     @Override
     public Department deleteDepartment(Object id) {
         entityManager.getTransaction().begin();
@@ -334,7 +380,11 @@ public class HibernateDAO implements IDAO {
         }
         return null;
     }
-
+    /**
+     * Finds employees by their department ID.
+     * @param idDept The ID of the department.
+     * @return A list of employees belonging to the specified department.
+     */
     @Override
     public List<Employee> findEmployeesByDept(Object idDept) {
         List<Employee> employees = new ArrayList<>();
