@@ -248,6 +248,7 @@ public class Db4oDAO implements Closeable, IDAO {
 
     private int getLastEmployeeId() {
         List<Employee> employees = findAllEmployees();
+        if (employees == null || employees.isEmpty()) return -1;
         employees.sort(Comparator.comparingInt(Employee::getId));
         return employees.getLast().getId();
     }
