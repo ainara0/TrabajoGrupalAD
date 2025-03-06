@@ -95,6 +95,14 @@ public class Main {
         System.out.print("Ingrese ID del departamento a actualizar: ");
         int id = Utils.Ask.askForNumber();
         Department department = dao.findDepartmentById(id);
+        if (askForConfirmation("Actualizar nombre?")) {
+            String name = Utils.Ask.askForString();
+            department.setName(name);
+        }
+        if (askForConfirmation("Actualizar ubicación?")) {
+            String location = Utils.Ask.askForString();
+            department.setLocation(location);
+        }
         dao.updateDepartment(department);
         if (department == null) {
             System.out.println("El departamento no existe");
@@ -116,9 +124,9 @@ public class Main {
         }
         dept.setId(id);
         System.out.print("Ingrese nombre del departamento: ");
-        dept.setName(Utils.Ask.askForString());
+        dept.setName(Utils.Ask.askForStringOnlyLetters());
         System.out.println("Ingrese la ubicación del departamento: ");
-        dept.setLocation(Utils.Ask.askForString());
+        dept.setLocation(Utils.Ask.askForStringOnlyLetters());
         boolean isAdded = dao.addDepartment(dept);
         if (isAdded) {
             System.out.println("El departamento añadido correctamente \n");
@@ -189,9 +197,9 @@ public class Main {
         System.out.println(" -----------------------------------");
         Employee emp = new Employee();
         System.out.print("Ingrese el nombre: ");
-        emp.setName(Utils.Ask.askForString());
+        emp.setName(Utils.Ask.askForStringOnlyLetters());
         System.out.print("Ingrese el puesto de trabajo: ");
-        emp.setJob(Utils.Ask.askForString());
+        emp.setJob(Utils.Ask.askForStringOnlyLetters());
         Department dept = findDepartmentById();
         if (dept == null) {
             System.out.println("El departamento no existe \n");
@@ -243,4 +251,23 @@ public class Main {
             System.out.println("No existen empleados \n");
         }
     }
+
+
+
+
+    private static boolean askForConfirmation(String question) {
+        System.out.println(question + " (y/n)");
+        while (true) {
+            String answer = Utils.Ask.askForString();
+            if (answer.equalsIgnoreCase("y")) {
+                return true;
+            }
+            if (answer.equalsIgnoreCase("n")) {
+                return false;
+            }
+            System.out.println("Please enter a correct answer.");
+        }
+    }
+
+
 }

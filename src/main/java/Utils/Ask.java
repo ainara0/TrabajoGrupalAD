@@ -42,7 +42,7 @@ public class Ask {
         return true;
     }
 
-    public static String askForString() {
+    public static String askForStringOnlyLetters() {
         String texto;
         boolean isRight = false;
         do {
@@ -55,10 +55,14 @@ public class Ask {
                 isRight = true;
 
             }
-        } while (isRight == false || texto.equalsIgnoreCase("exit"));
+        } while (!isRight || texto.equalsIgnoreCase("exit"));
         if (texto.equalsIgnoreCase("exit")) {
             return null;
         }
         return texto;
+    }
+    public static String askForString() {
+        Scanner in = new Scanner(System.in);
+        return in.nextLine();
     }
 }

@@ -146,7 +146,7 @@ public class HibernateDAO implements IDAO {
 
     private boolean askForJobFromEmployee(EmployeeJPA employee) {
         System.out.print("Ingrese el nuevo puesto: ");
-        String job = Utils.Ask.askForString();
+        String job = Utils.Ask.askForStringOnlyLetters();
         if (job == null) {
             entityManager.getTransaction().rollback();
             return true;
@@ -157,7 +157,7 @@ public class HibernateDAO implements IDAO {
 
     private boolean askForNameFromEmployee(EmployeeJPA employee) {
         System.out.print("Ingrese el nuevo apellido: ");
-        String name = Utils.Ask.askForString();
+        String name = Utils.Ask.askForStringOnlyLetters();
         if (name == null) {
             entityManager.getTransaction().rollback();
             return true;
@@ -286,7 +286,7 @@ public class HibernateDAO implements IDAO {
 
     private boolean askForCityFromDepartment(DepartmentJPA department) {
         System.out.print("Ingrese la nueva ubicacion: ");
-        String city = Utils.Ask.askForString();
+        String city = Utils.Ask.askForStringOnlyLetters();
         if (city == null) {
             entityManager.getTransaction().rollback();
             return true;
@@ -297,7 +297,7 @@ public class HibernateDAO implements IDAO {
 
     private boolean askForNameFromDepartment(DepartmentJPA department) {
         System.out.print("Ingrese el nuevo nombre: ");
-        String name = Utils.Ask.askForString();
+        String name = Utils.Ask.askForStringOnlyLetters();
         if (name == null) {
             entityManager.getTransaction().rollback();
             return true;
