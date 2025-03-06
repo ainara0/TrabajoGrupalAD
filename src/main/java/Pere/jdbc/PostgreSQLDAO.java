@@ -114,7 +114,7 @@ public class PostgreSQLDAO implements IDAO {
             }
         } catch (SQLException e) {
 
-            e.printStackTrace();
+            System.out.println("Ya existe el empleado con el ID: " + employee.getId() + " en la base de datos.");
 
         }
     }
@@ -384,6 +384,7 @@ public class PostgreSQLDAO implements IDAO {
      */
     @Override
     public boolean addDepartment(Department department) {
+
         boolean added = false;
         String sql = "INSERT INTO departamento (depno, nombre, ubicacion) VALUES (?, ?, ?)";
         try (Connection conn = getConnection();
@@ -395,7 +396,8 @@ public class PostgreSQLDAO implements IDAO {
             int affectedRows = pstmt.executeUpdate();
             added = affectedRows > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+
+            return false;
         }
         return added;
     }
@@ -416,14 +418,15 @@ public class PostgreSQLDAO implements IDAO {
      */
     @Override
     public Department updateDepartment(Object id) {
-        Department dept = null;
-        int departmentId = (int) id;
+        if (!(id instanceof Department dept)){
+            return null;
+        }
 
         // 1. Verificar que el departamento existe en la base de datos
         String sqlCheck = "SELECT depno FROM departamento WHERE depno = ?";
         try (Connection conn = getConnection();
              PreparedStatement pstmtCheck = conn.prepareStatement(sqlCheck)) {
-            pstmtCheck.setInt(1, departmentId);
+            pstmtCheck.setInt(1, dept.getId());
             try (ResultSet rsCheck = pstmtCheck.executeQuery()) {
                 if (!rsCheck.next()) {
                     System.out.println("El departamento no existe en la base de datos.");
@@ -470,13 +473,13 @@ public class PostgreSQLDAO implements IDAO {
                     System.out.print("Introduce el nuevo nombre: ");
                     String newName = scanner.nextLine();
                     pstmt.setString(1, newName);
-                    pstmt.setInt(2, departmentId);
+                    pstmt.setInt(2, dept.getId());
                     break;
                 case 2:
                     System.out.print("Introduce la nueva localidad: ");
                     String newLocation = scanner.nextLine();
                     pstmt.setString(1, newLocation);
-                    pstmt.setInt(2, departmentId);
+                    pstmt.setInt(2, dept.getId());
                     break;
                 case 3:
                     System.out.print("Introduzca el nuevo nombre: ");
@@ -485,7 +488,7 @@ public class PostgreSQLDAO implements IDAO {
                     String location = scanner.nextLine();
                     pstmt.setString(1, name);
                     pstmt.setString(2, location);
-                    pstmt.setInt(3, departmentId);
+                    pstmt.setInt(3, dept.getId());
                     break;
             }
 
