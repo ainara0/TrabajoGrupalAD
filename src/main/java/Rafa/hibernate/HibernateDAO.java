@@ -45,7 +45,6 @@ public class HibernateDAO implements IDAO {
                     employeeJPA.getJob(),
                     findDepartmentById(employeeJPA.getDepno().getId())
             );
-            System.out.println(employee);
             return employee;
         } else {
             return null;
