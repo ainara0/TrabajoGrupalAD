@@ -86,7 +86,8 @@ public class Main {
     private void updateDepartment() {
         System.out.print("Ingrese ID del departamento a actualizar: ");
         int id = Utils.Ask.askForNumber();
-        Department department = dao.updateDepartment(id);
+        Department department = dao.findDepartmentById(id);
+        dao.updateDepartment(department);
         if (department == null) {
             System.err.println("El departamento no existe");
         }
