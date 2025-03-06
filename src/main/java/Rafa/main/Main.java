@@ -224,6 +224,7 @@ public class Main {
         emp.setName(Utils.Ask.askForStringOnlyLetters());
         System.out.print("Ingrese el puesto de trabajo: ");
         emp.setJob(Utils.Ask.askForStringOnlyLetters());
+        System.out.print("Ingrese el departamento: ");
         Department dept = findDepartmentById();
         if (dept == null) {
             System.out.println("El departamento no existe \n");
