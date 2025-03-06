@@ -65,7 +65,7 @@ public class MongoDBDAO implements Closeable, IDAO {
                 .append("_id", employee.getId())
                 .append("name", employee.getName())
                 .append("job", employee.getJob())
-                .append("department_id", employee.getDepartment())
+                .append("department_id", employee.getDepartment().getId())
                 ;
         employeesCollection.insertOne(document);
     }

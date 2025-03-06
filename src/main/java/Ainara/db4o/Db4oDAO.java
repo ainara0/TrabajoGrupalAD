@@ -252,4 +252,6 @@ public class Db4oDAO implements Closeable, IDAO {
         employees.sort(Comparator.comparingInt(Employee::getId));
         return employees.getLast().getId();
     }
+
+
 }
