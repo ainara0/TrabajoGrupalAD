@@ -11,21 +11,36 @@ import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * MongoDB Data Access Object (DAO) implementation for handling MongoDB database operations.
+ */
 public class MongoDBDAO implements Closeable, IDAO {
     static MongoClient mongoClient;
     static MongoDatabase db;
 
+    /**
+     * Initializes the MongoDB connection with a specified connection string.
+     */
     public MongoDBDAO() {
         String connectionString = "mongodb+srv://admin:0000@cluster0.0pqj1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
         mongoClient = MongoClients.create(connectionString);
         db = mongoClient.getDatabase("GroupProject");
     }
 
+    /**
+     * Closes the MongoDB connection.
+     */
     @Override
     public void close() {
         mongoClient.close();
     }
 
+    /**
+     * Adds a new department to the MongoDB collection.
+     * @param department The department to be added.
+     * @return true if the operation is successful.
+     */
     @Override
     public boolean addDepartment(Department department) {
         // todo se duplica si hay exactamente los mismos datos? se comprueba que existe?
@@ -38,6 +53,11 @@ public class MongoDBDAO implements Closeable, IDAO {
         //TODO return
         return true;
     }
+
+    /**
+     * Adds a new employee to the MongoDB collection.
+     * @param employee The employee to be added.
+     */
     @Override
     public void addEmployee(Employee employee) {
         MongoCollection<Document> employeesCollection = db.getCollection("Employee");
@@ -49,6 +69,11 @@ public class MongoDBDAO implements Closeable, IDAO {
                 ;
         employeesCollection.insertOne(document);
     }
+
+    /**
+     * Retrieves all employees from the MongoDB collection.
+     * @return A list of all employees.
+     */
     @Override
     public List<Employee> findAllEmployees() {
         MongoCollection<Document> employeesCollection = db.getCollection("Employee");
@@ -62,6 +87,11 @@ public class MongoDBDAO implements Closeable, IDAO {
         return employees;
     }
 
+    /**
+     * Finds an employee by their ID.
+     * @param id The ID of the employee.
+     * @return The Employee object if found, otherwise null.
+     */
     @Override
     public Employee findEmployeeById(Object id) {
         MongoCollection<Document> departmentsCollection = db.getCollection("Employee");
@@ -74,6 +104,11 @@ public class MongoDBDAO implements Closeable, IDAO {
         return null;
     }
 
+    /**
+     * Updates an employee's information in the MongoDB collection.
+     * @param employeeObject The employee object with updated data.
+     * @return The updated Employee object if successful, otherwise null.
+     */
     @Override
     public Employee updateEmployee(Object employeeObject) {
         if (!(employeeObject instanceof Employee employee)) {
@@ -91,6 +126,11 @@ public class MongoDBDAO implements Closeable, IDAO {
         return updatedEmployee != null ? toEmployee(updatedEmployee) : null;
     }
 
+    /**
+     * Deletes an employee from the MongoDB collection.
+     * @param id The ID of the employee to be deleted.
+     * @return true if the employee was deleted, otherwise false.
+     */
     @Override
     public boolean deleteEmployee(Object id) {
         MongoCollection<Document> employeesCollection = db.getCollection("Employee");
@@ -98,6 +138,10 @@ public class MongoDBDAO implements Closeable, IDAO {
         return employee != null;
     }
 
+    /**
+     * Retrieves all departments from the MongoDB collection.
+     * @return A list of all departments.
+     */
     @Override
     public List<Department> findAllDepartments() {
         MongoCollection<Document> departmentsCollection = db.getCollection("Department");
@@ -111,6 +155,11 @@ public class MongoDBDAO implements Closeable, IDAO {
         return departments;
     }
 
+    /**
+     * Finds a department by its ID.
+     * @param id The ID of the department.
+     * @return The Department object if found, otherwise null.
+     */
     @Override
     public Department findDepartmentById(Object id) {
         MongoCollection<Document> departmentsCollections = db.getCollection("Department");
@@ -118,6 +167,11 @@ public class MongoDBDAO implements Closeable, IDAO {
         return departmentDocument != null ? toDepartment(departmentDocument) : null;
     }
 
+    /**
+     * Updates a department's information in the MongoDB collection.
+     * @param departmentObject The department object with updated data.
+     * @return The updated Department object if successful, otherwise null.
+     */
     @Override
     public Department updateDepartment(Object departmentObject) {
         if (!(departmentObject instanceof Department department)) {
@@ -133,6 +187,12 @@ public class MongoDBDAO implements Closeable, IDAO {
         return updatedDepartment != null ? toDepartment(updatedDepartment) : null;
     }
 
+
+    /**
+     * Deletes a department from the MongoDB collection.
+     * @param id The ID of the department to be deleted.
+     * @return The deleted Department object if successful, otherwise null.
+     */
     @Override
     public Department deleteDepartment(Object id) {
         MongoCollection<Document> departmentsCollection = db.getCollection("Department");
@@ -140,6 +200,11 @@ public class MongoDBDAO implements Closeable, IDAO {
         return department != null ? toDepartment(department) : null;
     }
 
+    /**
+     * Finds employees by their department ID.
+     * @param idDept The ID of the department.
+     * @return A list of employees belonging to the department.
+     */
     @Override
     public List<Employee> findEmployeesByDept(Object idDept) {
         MongoCollection<Document> employeesCollection = db.getCollection("Employee");
@@ -154,6 +219,12 @@ public class MongoDBDAO implements Closeable, IDAO {
         return employees;
     }
 
+
+    /**
+     * Converts a MongoDB Document into a Department object.
+     * @param document The MongoDB Document.
+     * @return A Department object.
+     */
     private Department toDepartment(Document document) {
         return new Department(
                 document.getInteger("_id"),
@@ -162,6 +233,11 @@ public class MongoDBDAO implements Closeable, IDAO {
         );
     }
 
+    /**
+     * Converts a MongoDB Document into an Employee object.
+     * @param document The MongoDB Document.
+     * @return An Employee object.
+     */
     private Employee toEmployee(Document document) {
         return new Employee(
                 document.getInteger("_id"),
