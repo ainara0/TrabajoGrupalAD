@@ -180,7 +180,7 @@ public class MongoDBDAO implements Closeable, IDAO {
         MongoCollection<Document> departmentsCollection = db.getCollection("Department");
         Bson query = Filters.eq("_id", department.getId());
         Bson updates = Updates.combine(
-                Updates.set("first_name", department.getName()),
+                Updates.set("name", department.getName()),
                 Updates.set("location", department.getLocation())
         );
         Document updatedDepartment = departmentsCollection.findOneAndUpdate(query,updates);
