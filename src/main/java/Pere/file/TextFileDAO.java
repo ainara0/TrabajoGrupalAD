@@ -219,10 +219,12 @@ public class TextFileDAO implements IDAO {
      */
     @Override
     public Employee updateEmployee(Object id) {
-        int empId = (int) id;
+        if (!(id instanceof Employee employee)){
+            return null;
+        }
         Scanner scanner = new Scanner(System.in);
         for (Employee e : employees) {
-            if (e.getId() == empId) {
+            if (e.getId() == employee.getId()) {
                 System.out.println("Seleccione el campo que desea actualizar para el empleado:");
                 System.out.println("1. Nombre");
                 System.out.println("2. Trabajo");
@@ -406,10 +408,12 @@ public class TextFileDAO implements IDAO {
      */
     @Override
     public Department updateDepartment(Object id) {
-        int depId = (int) id;
+        if (!(id instanceof Department dept)){
+            return null;
+        }
         Scanner scanner = new Scanner(System.in);
         for (Department d : departments) {
-            if (d.getId() == depId) {
+            if (d.getId() == dept.getId()) {
                 System.out.println("Seleccione el campo a actualizar para el departamento:");
                 System.out.println("1. Nombre");
                 System.out.println("2. Ciudad");
