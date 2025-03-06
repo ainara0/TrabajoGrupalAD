@@ -23,7 +23,6 @@ public class Db4oDAO implements Closeable, IDAO {
     }
     public boolean connectToDatabase() {
         try {
-            // todo mirar si el nombre de la base de datos es correcta
             container = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(),"GroupProject");
         } catch (Exception e) {
             return false;

@@ -68,8 +68,10 @@ public class HibernateDAO implements IDAO {
     @Override
     public Employee updateEmployee(Object id) {
         entityManager.getTransaction().begin();
-
-        EmployeeJPA employeeJpa = entityManager.find(EmployeeJPA.class, id);
+        if (!(id instanceof Employee employee)) {
+            return null;
+        }
+        EmployeeJPA employeeJpa = entityManager.find(EmployeeJPA.class, employee.getId());
 
         if (employeeJpa == null) {
             entityManager.getTransaction().rollback();
