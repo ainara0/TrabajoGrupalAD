@@ -69,7 +69,7 @@ public class Db4oDAO implements Closeable, IDAO {
     @Override
     public List<Employee> findAllEmployees() {
         ObjectSet<Employee> result = container.query(Employee.class);
-        return result.isEmpty() ? null : result.stream().toList();
+        return result.stream().toList();
     }
 
     /**
@@ -86,7 +86,7 @@ public class Db4oDAO implements Closeable, IDAO {
                 return employee.getId() == Integer.parseInt(id.toString());
             }
         });
-        return result.isEmpty() ? null : result.getFirst();
+        return result.getFirst();
     }
 
     /**
@@ -143,7 +143,7 @@ public class Db4oDAO implements Closeable, IDAO {
     @Override
     public List<Department> findAllDepartments() {
         ObjectSet<Department> result = container.query(Department.class);
-        return result.isEmpty() ? null : result.stream().toList();
+        return result.stream().toList();
     }
 
     /**
@@ -160,7 +160,7 @@ public class Db4oDAO implements Closeable, IDAO {
                 return department.getId() == Integer.parseInt(id.toString());
             }
         });
-        return result.isEmpty() ? null : result.getFirst();
+        return result.getFirst();
     }
 
     /**
@@ -228,7 +228,7 @@ public class Db4oDAO implements Closeable, IDAO {
                 return employee.getDepartment().getId() == Integer.parseInt(idDept.toString());
             }
         });
-        return result.isEmpty() ? null : result.stream().toList();
+        return result.stream().toList();
     }
 
     /**

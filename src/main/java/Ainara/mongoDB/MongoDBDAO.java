@@ -4,6 +4,7 @@ import DAO.*;
 import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
+import org.bson.BsonValue;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -49,9 +50,8 @@ public class MongoDBDAO implements Closeable, IDAO {
                 .append("_id", department.getId())
                 .append("name", department.getName())
                 .append("location", department.getLocation());
-        departmentsCollection.insertOne(document);
-        //TODO return
-        return true;
+        BsonValue id = departmentsCollection.insertOne(document).getInsertedId();
+        return id != null;
     }
 
     /**
