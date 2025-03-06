@@ -62,7 +62,6 @@ public class Db4oDAO implements Closeable, IDAO {
 
     @Override
     public Employee updateEmployee(Object employeeObject) {
-        // todo se pasa por parámetro un objeto tipo Employee, nosotros pasamos int
         if (!(employeeObject instanceof Employee employee)) {return null;}
         try {
             container.store(employee);

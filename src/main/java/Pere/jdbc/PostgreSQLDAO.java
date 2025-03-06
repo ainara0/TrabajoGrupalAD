@@ -135,7 +135,7 @@ public class PostgreSQLDAO implements IDAO {
      */
     @Override
     public Employee updateEmployee(Object id) {
-        int empId = (int) id;
+
         if (!(id instanceof Employee employee)){
             return null;
         }
@@ -145,7 +145,7 @@ public class PostgreSQLDAO implements IDAO {
         try (Connection conn = getConnection();
              PreparedStatement pstmtSelect = conn.prepareStatement(sqlSelect)) {
 
-            pstmtSelect.setInt(1, empId);
+            pstmtSelect.setInt(1, employee.getId());
             try (ResultSet rs = pstmtSelect.executeQuery()) {
                 if (rs.next()) {
                     // Si se encuentra el empleado, se instancia y se cargan sus datos

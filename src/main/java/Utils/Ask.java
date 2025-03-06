@@ -9,7 +9,7 @@ public class Ask {
     public static int askForNumber() {
         String input = scanner.nextLine();
         if (!isNumeric(input)) {
-            System.out.println("Input is not a number. Try again.");
+            System.out.println("No has introducido un número. Prueba de nuevo");
         } else {
             int number = Integer.parseInt(input);
             return number;
