@@ -136,7 +136,9 @@ public class PostgreSQLDAO implements IDAO {
     @Override
     public Employee updateEmployee(Object id) {
         int empId = (int) id;
-        Employee employee = null;
+        if (!(id instanceof Employee employee)){
+            return null;
+        }
 
         // 1. Verificar en la base de datos si el empleado existe
         String sqlSelect = "SELECT empno, nombre, puesto, depno FROM empleado WHERE empno = ?";
