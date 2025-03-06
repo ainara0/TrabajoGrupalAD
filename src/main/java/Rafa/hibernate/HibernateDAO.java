@@ -230,7 +230,10 @@ public class HibernateDAO implements IDAO {
     public Department updateDepartment(Object id) {
         entityManager.getTransaction().begin();
 
-        DepartmentJPA departmentJPA = entityManager.find(DepartmentJPA.class, id);
+        if (!(id instanceof Employee employee)){
+            return null;
+        }
+        DepartmentJPA departmentJPA = entityManager.find(DepartmentJPA.class, employee.getId());
 
         if (departmentJPA == null) {
             entityManager.getTransaction().rollback();

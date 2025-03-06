@@ -94,7 +94,6 @@ public class Db4oDAO implements Closeable, IDAO {
 
     @Override
     public Department findDepartmentById(Object id) {
-        // todo si es numerico null?? pasas int y hay que devolver null o Department
         if (!isNumeric(id)) { return null; }
         ObjectSet<Department> result = container.query(new Predicate<>() {
             public boolean match(Department department) {
@@ -120,7 +119,6 @@ public class Db4oDAO implements Closeable, IDAO {
 
     @Override
     public Department updateDepartment(Object departmentObject) {
-        // todo no pasamos Department, pasamos int
         if (!(departmentObject instanceof Department department)) {return null;}
         try {
             container.store(department);

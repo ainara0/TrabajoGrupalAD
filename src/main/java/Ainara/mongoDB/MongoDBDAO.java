@@ -76,7 +76,6 @@ public class MongoDBDAO implements Closeable, IDAO {
 
     @Override
     public Employee updateEmployee(Object employeeObject) {
-        // todo pasas un objeto tipo Employee por parámetro? en main se pasa un int
         if (!(employeeObject instanceof Employee employee)) {
             return null;
         }
@@ -121,7 +120,6 @@ public class MongoDBDAO implements Closeable, IDAO {
 
     @Override
     public Department updateDepartment(Object departmentObject) {
-        // todo no pasamos Department pasamos int
         if (!(departmentObject instanceof Department department)) {
             return null;
         }

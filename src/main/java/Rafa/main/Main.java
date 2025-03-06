@@ -79,7 +79,7 @@ public class Main {
         int id = Utils.Ask.askForNumber();
         Department department = dao.deleteDepartment(id);
         if (department == null) {
-            System.err.println("El departamento con id " + id + " no existe.");
+            System.out.println("El departamento con id " + id + " no existe.");
         }
     }
 
@@ -89,7 +89,7 @@ public class Main {
         Department department = dao.findDepartmentById(id);
         dao.updateDepartment(department);
         if (department == null) {
-            System.err.println("El departamento no existe");
+            System.out.println("El departamento no existe");
         }
     }
 
@@ -103,18 +103,18 @@ public class Main {
         dept.setLocation(Utils.Ask.askForString());
         boolean isAdded = dao.addDepartment(dept);
         if (!isAdded) {
-            System.err.println("El departamento con id " + dept.getId() + " ya existe");
+            System.out.println("El departamento con id " + dept.getId() + " ya existe");
         }
     }
 
     private void findAllDepartments() {
         List<Department> departments = dao.findAllDepartments();
-        if (departments.isEmpty() && departments != null) {
+        if (!departments.isEmpty() && departments != null) {
             for (Department department : departments) {
                 System.out.println(department);
             }
         } else {
-            System.err.println("No existen departamentos.");
+            System.out.println("No existen departamentos.");
         }
     }
 
@@ -123,7 +123,9 @@ public class Main {
         int id = Utils.Ask.askForNumber();
         boolean deleted = dao.deleteEmployee(id);
         if (!deleted) {
-            System.err.println("El empleado con id " + id + " no existe");
+            System.out.println("El empleado con id " + id + " no existe");
+        } else {
+            System.out.println("El empleado con id " + id + " eliminado");
         }
     }
 
@@ -133,7 +135,7 @@ public class Main {
         Employee employee = dao.findEmployeeById(id);
         dao.updateEmployee(employee);
         if (employee == null) {
-            System.err.println("El empleado con id " + id + " no existe.");
+            System.out.println("El empleado con id " + id + " no existe.");
         }
     }
 
@@ -145,6 +147,7 @@ public class Main {
             System.err.println("No existe el departamento");
             return null;
         }
+        System.out.println(department);
         return department;
     }
 
@@ -154,10 +157,9 @@ public class Main {
         emp.setName(Utils.Ask.askForString());
         System.out.print("Ingrese el puesto de trabajo: ");
         emp.setJob(Utils.Ask.askForString());
-        System.out.println("ingrese el id del departamento");
         Department dept = findDepartmentById();
         if (dept == null) {
-            System.err.println("El departamento no existe");
+            System.out.println("El departamento no existe");
             return;
         }
         emp.setDepartment(dept);
@@ -173,7 +175,7 @@ public class Main {
                 System.out.println(employee);
             }
         } else {
-            System.err.println("No existen empleados en el departamento " + idDept);
+            System.out.println("No existen empleados en el departamento " + idDept);
         }
     }
 
@@ -182,8 +184,9 @@ public class Main {
         int id = Utils.Ask.askForNumber();
         Employee employee = dao.findEmployeeById(id);
         if (employee == null) {
-            System.err.println("El empleado no existe");
+            System.out.println("El empleado no existe");
         }
+        System.out.println(employee);
     }
 
     private void printEmployeesTF() {
@@ -193,7 +196,7 @@ public class Main {
                 System.out.println(employee);
             }
         } else {
-            System.err.println("No existen empleados");
+            System.out.println("No existen empleados");
         }
     }
 }
