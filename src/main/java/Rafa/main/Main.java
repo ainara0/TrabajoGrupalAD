@@ -75,6 +75,9 @@ public class Main {
     }
 
     private void deleteDepartment() {
+        System.out.println(" -----------------------------------");
+        System.out.println("|--------ELIMINR DEPRTMENTO--------|");
+        System.out.println(" -----------------------------------");
         System.out.print("Ingrese ID del departamento a eliminar: ");
         int id = Utils.Ask.askForNumber();
         Department department = dao.deleteDepartment(id);
@@ -86,6 +89,9 @@ public class Main {
     }
 
     private void updateDepartment() {
+        System.out.println(" -----------------------------------");
+        System.out.println("|------ACTUALIZA DEPARTAMENTO------|");
+        System.out.println(" -----------------------------------");
         System.out.print("Ingrese ID del departamento a actualizar: ");
         int id = Utils.Ask.askForNumber();
         Department department = dao.findDepartmentById(id);
@@ -98,6 +104,9 @@ public class Main {
     }
 
     private void addDepartment() {
+        System.out.println(" -----------------------------------");
+        System.out.println("|--------AÑADE DEPARTAMENTO--------|");
+        System.out.println(" -----------------------------------");
         Department dept = new Department();
         System.out.println("Ingrese el ID del nuevo departamento: ");
         int id = Utils.Ask.askForNumber();
@@ -117,6 +126,9 @@ public class Main {
     }
 
     private void findAllDepartments() {
+        System.out.println(" -----------------------------------");
+        System.out.println("|---BUSCA TODOS LOS DEPARTMENTOS---|");
+        System.out.println(" -----------------------------------");
         List<Department> departments = dao.findAllDepartments();
         if (!departments.isEmpty() && departments != null) {
             for (Department department : departments) {
@@ -128,6 +140,9 @@ public class Main {
     }
 
     private void deleteEmployee() {
+        System.out.println(" -----------------------------------");
+        System.out.println("|---------ELIMINAR EMPLEADO---------|");
+        System.out.println(" -----------------------------------");
         System.out.print("Ingrese ID del empleado a eliminar: ");
         int id = Utils.Ask.askForNumber();
         boolean deleted = dao.deleteEmployee(id);
@@ -139,6 +154,9 @@ public class Main {
     }
 
     private void updateEmployee() {
+        System.out.println(" -----------------------------------");
+        System.out.println("|--------ACTUALIZA EMPLEADO---------|");
+        System.out.println(" -----------------------------------");
         System.out.print("Ingrese ID del empleado a actualizar: ");
         int id = Utils.Ask.askForNumber();
         Employee employee = dao.findEmployeeById(id);
@@ -151,6 +169,9 @@ public class Main {
     }
 
     private Department findDepartmentById() {
+        System.out.println(" -----------------------------------");
+        System.out.println("|-----BUSCA DEPARTAMENTO POR ID-----|");
+        System.out.println(" -----------------------------------");
         System.out.print("Ingrese ID del departamento: ");
         int id = Utils.Ask.askForNumber();
         Department department = dao.findDepartmentById(id);
@@ -164,7 +185,7 @@ public class Main {
 
     private void addEmployee() {
         System.out.println(" -----------------------------------");
-        System.out.println("|-----BUSCANDO EMPLEADOS POR ID-----|");
+        System.out.println("|----------AÑADIR EMPLEADO----------|");
         System.out.println(" -----------------------------------");
         Employee emp = new Employee();
         System.out.print("Ingrese el nombre: ");
