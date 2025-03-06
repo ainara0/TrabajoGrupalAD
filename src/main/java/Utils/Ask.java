@@ -44,10 +44,18 @@ public class Ask {
 
     public static String askForString() {
         String texto;
+        boolean isRight = false;
         do {
             Scanner in = new Scanner(System.in);
             texto = in.nextLine().trim();
-        } while (!texto.matches(regex) || texto.equalsIgnoreCase("exit"));
+            if (!texto.matches(regex)){
+                System.out.println("El texto introducido no es válido. \n Inténtalo de nuevo(solamente letras): ");
+                isRight = false;
+            } else {
+                isRight = true;
+
+            }
+        } while (isRight == false || texto.equalsIgnoreCase("exit"));
         if (texto.equalsIgnoreCase("exit")) {
             return null;
         }
