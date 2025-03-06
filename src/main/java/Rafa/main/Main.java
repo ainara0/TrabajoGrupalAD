@@ -112,7 +112,7 @@ public class Main {
         dept.setLocation(Utils.Ask.askForString());
         boolean isAdded = dao.addDepartment(dept);
         if (isAdded) {
-            System.out.println("El departamento con añadido correctamente \n");
+            System.out.println("El departamento añadido correctamente \n");
         }
     }
 
@@ -163,6 +163,9 @@ public class Main {
     }
 
     private void addEmployee() {
+        System.out.println(" -----------------------------------");
+        System.out.println("|-----BUSCANDO EMPLEADOS POR ID-----|");
+        System.out.println(" -----------------------------------");
         Employee emp = new Employee();
         System.out.print("Ingrese el nombre: ");
         emp.setName(Utils.Ask.askForString());
@@ -179,6 +182,9 @@ public class Main {
     }
 
     private void findEmployeeByDepartment() {
+        System.out.println(" -----------------------------------");
+        System.out.println("|BUSCANDO EMPLEADOS POR DEPARTAMENTO|");
+        System.out.println(" -----------------------------------");
         System.out.print("Ingrese ID del departamento: ");
         int idDept = Utils.Ask.askForNumber();
         List<Employee> employees = dao.findEmployeesByDept(idDept);
@@ -192,6 +198,9 @@ public class Main {
     }
 
     private void findEmployeeById() {
+        System.out.println(" -----------------------------------");
+        System.out.println("|-----BUSCANDO EMPLEADOS POR ID-----|");
+        System.out.println(" -----------------------------------");
         System.out.print("Ingrese ID del empleado: ");
         int id = Utils.Ask.askForNumber();
         Employee employee = dao.findEmployeeById(id);
@@ -202,7 +211,9 @@ public class Main {
     }
 
     private void printEmployeesTF() {
-        List<Employee> employees = dao.findAllEmployees();
+        System.out.println(" -----------------------------------");
+        System.out.println("|---------IMPRIME EMPLEADOS---------|");
+        System.out.println(" -----------------------------------");        List<Employee> employees = dao.findAllEmployees();
         if (employees != null && !employees.isEmpty()) {
             for (Employee employee : employees) {
                 System.out.println(employee);
