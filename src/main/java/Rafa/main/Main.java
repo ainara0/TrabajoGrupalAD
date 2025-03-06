@@ -1,5 +1,6 @@
 package Rafa.main;
 
+import Ainara.db4o.Db4oDAO;
 import DAO.Department;
 import DAO.Employee;
 import DAO.IDAO;
@@ -26,6 +27,9 @@ public class Main {
             System.out.print("Ingrese opción: ");
             int dbOption = Utils.Ask.askForNumber(0, 5);
             try {
+                if (dao instanceof Db4oDAO db4oDAO){
+                    db4oDAO.close();
+                }
                 dao = DAOFactory.getDAO(dbOption);
                 if (dao == null) {
                     isFinished = true;
@@ -97,10 +101,12 @@ public class Main {
         int id = Utils.Ask.askForNumber();
         Department department = dao.findDepartmentById(id);
         if (askForConfirmation("Actualizar nombre?")) {
+            System.out.println("Cual es el nuevo nombre? ");
             String name = Utils.Ask.askForString();
             department.setName(name);
         }
         if (askForConfirmation("Actualizar ubicación?")) {
+            System.out.println("Cual es la nueva ubicación? ");
             String location = Utils.Ask.askForString();
             department.setLocation(location);
         }
@@ -169,12 +175,29 @@ public class Main {
         System.out.print("Ingrese ID del empleado a actualizar: ");
         int id = Utils.Ask.askForNumber();
         Employee employee = dao.findEmployeeById(id);
-        dao.updateEmployee(employee);
-        if (employee == null) {
-            System.out.println("El empleado con id " + id + " no existe. \n");
-        } else {
-            System.out.println("El empleado con id " + id + " actualizado con éxito \n");
+        if (askForConfirmation("Actualizar nombre?")) {
+            System.out.println("Cual es el nuevo nombre? ");
+            String name = Utils.Ask.askForString();
+            employee.setName(name);
         }
+        if (askForConfirmation("Actualizar puesto?")) {
+            System.out.println("Cual es el nuevo puesto? ");
+            String location = Utils.Ask.askForString();
+            employee.setJob(location);
+        }
+        if (askForConfirmation("Actualizar departamento?")) {
+            System.out.println("Cual es el nuevo departamento? ");
+            int deptID = Utils.Ask.askForNumber();
+            Department dept = dao.findDepartmentById(deptID);
+            if (dept != null) {
+                employee.setDepartment(dept);
+            } else {
+                System.out.println("El departamento con id " + deptID + " no existe");
+            }
+        }
+
+        dao.updateEmployee(employee);
+        System.out.println("El empleado con id " + id + " actualizado. \n");
     }
 
     private Department findDepartmentById() {
@@ -243,7 +266,8 @@ public class Main {
     private void printEmployeesTF() {
         System.out.println(" -----------------------------------");
         System.out.println("|---------IMPRIME EMPLEADOS---------|");
-        System.out.println(" -----------------------------------");        List<Employee> employees = dao.findAllEmployees();
+        System.out.println(" -----------------------------------");
+        List<Employee> employees = dao.findAllEmployees();
         if (employees != null && !employees.isEmpty()) {
             for (Employee employee : employees) {
                 System.out.println(employee);
@@ -261,6 +285,7 @@ public class Main {
         while (true) {
             String answer = Utils.Ask.askForString();
             if (answer.equalsIgnoreCase("y")) {
+
                 return true;
             }
             if (answer.equalsIgnoreCase("n")) {

@@ -130,7 +130,6 @@ public class PostgreSQLDAO implements IDAO {
      * </ul>
      * </p>
      *
-     * @param id the identifier of the employee to update.
      * @return the updated {@link Employee} object, or {@code null} if not found or if the update was canceled.
      */
 
@@ -348,85 +347,40 @@ public class PostgreSQLDAO implements IDAO {
         }
 
         // 1. Verificar que el departamento existe en la base de datos
-        String sqlCheck = "SELECT depno FROM departamento WHERE depno = ?";
-        try (Connection conn = getConnection();
-             PreparedStatement pstmtCheck = conn.prepareStatement(sqlCheck)) {
-            pstmtCheck.setInt(1, dept.getId());
-            try (ResultSet rsCheck = pstmtCheck.executeQuery()) {
-                if (!rsCheck.next()) {
-                    System.out.println("El departamento no existe en la base de datos.");
-                    return null;
-                }
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            return null;
-        }
+//        String sqlCheck = "SELECT depno FROM departamento WHERE depno = ?";
+//        try (Connection conn = getConnection();
+//             PreparedStatement pstmtCheck = conn.prepareStatement(sqlCheck)) {
+//            pstmtCheck.setInt(1, dept.getId());
+//            try (ResultSet rsCheck = pstmtCheck.executeQuery()) {
+//                if (!rsCheck.next()) {
+//                    System.out.println("El departamento no existe en la base de datos.");
+//                    return null;
+//                }
+//            }
+//        } catch (SQLException ex) {
+//            ex.printStackTrace();
+//            return null;
+//        }
 
         // 2. Solicitar al usuario qué campo desea actualizar
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Seleccione el campo a actualizar:");
-        System.out.println("1. Nombre");
-        System.out.println("2. Localidad");
-        System.out.println("3. Ambas");
-        System.out.print("Opcion: ");
-        int option = scanner.nextInt();
-        scanner.nextLine(); // Consumir el salto de línea
 
-        String sql = "";
-        switch (option) {
-            case 1:
-                sql = "UPDATE departamento SET nombre = ? WHERE depno = ? RETURNING depno, nombre, ubicacion";
-                break;
-            case 2:
-                sql = "UPDATE departamento SET ubicacion = ? WHERE depno = ? RETURNING depno, nombre, ubicacion";
-                break;
-            case 3:
-                sql = "UPDATE departamento SET nombre = ?, ubicacion = ? WHERE depno = ? RETURNING depno, nombre, ubicacion";
-                break;
-            default:
-                System.out.println("Opción inválida.");
-                return null;
-        }
-
-        // 3. Ejecutar la actualización
+        String sqlUpdate = "UPDATE departamento SET nombre = ?, ubicacion = ? WHERE depno = ?";
         try (Connection conn = getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmtUpdate = conn.prepareStatement(sqlUpdate)) {
 
-            switch (option) {
-                case 1:
-                    System.out.print("Introduce el nuevo nombre: ");
-                    String newName = scanner.nextLine();
-                    pstmt.setString(1, newName);
-                    pstmt.setInt(2, dept.getId());
-                    break;
-                case 2:
-                    System.out.print("Introduce la nueva localidad: ");
-                    String newLocation = scanner.nextLine();
-                    pstmt.setString(1, newLocation);
-                    pstmt.setInt(2, dept.getId());
-                    break;
-                case 3:
-                    System.out.print("Introduzca el nuevo nombre: ");
-                    String name = scanner.nextLine();
-                    System.out.print("Introduzca la nueva ubicación: ");
-                    String location = scanner.nextLine();
-                    pstmt.setString(1, name);
-                    pstmt.setString(2, location);
-                    pstmt.setInt(3, dept.getId());
-                    break;
-            }
+            pstmtUpdate.setString(1, dept.getName());
+            pstmtUpdate.setString(2, dept.getLocation());
+            pstmtUpdate.setInt(3, dept.getId());
 
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                dept = new Department(
-                        rs.getInt("depno"),
-                        rs.getString("nombre"),
-                        rs.getString("ubicacion")
-                );
+
+            int rowsAffected = pstmtUpdate.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Empleado actualizado correctamente en la base de datos.");
+            } else {
+                System.out.println("No se pudo actualizar el empleado.");
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ex) {
+            return null;
         }
 
         return dept;
