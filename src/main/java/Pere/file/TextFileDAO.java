@@ -217,88 +217,98 @@ public class TextFileDAO implements IDAO {
      * @param id the identifier of the employee to update.
      * @return the updated {@link Employee} object, or {@code null} if not found or if update is canceled.
      */
+//    public Employee updateEmployee(Object id) {
+//        if (!(id instanceof Employee employee)){
+//            return null;
+//        }
+//        Scanner scanner = new Scanner(System.in);
+//        for (Employee e : employees) {
+//            if (e.getId() == employee.getId()) {
+//                System.out.println("Seleccione el campo que desea actualizar para el empleado:");
+//                System.out.println("1. Nombre");
+//                System.out.println("2. Trabajo");
+//                System.out.println("3. Departamento");
+//                System.out.println("4. Todos los campos");
+//                System.out.print("Opciones: ");
+//                int option;
+//                try {
+//                    option = Integer.parseInt(scanner.nextLine());
+//                } catch (NumberFormatException ex) {
+//                    System.out.println("Error: La opción debe ser un número entero.");
+//                    return null;
+//                }
+//
+//                switch (option) {
+//                    case 1:
+//                        System.out.print("Introduzca el nuevo nombre: ");
+//                        String newName = scanner.nextLine();
+//                        e.setName(newName);
+//                        break;
+//                    case 2:
+//                        System.out.print("Introduzca el nuevo trabajo: ");
+//                        String newJob = scanner.nextLine();
+//                        e.setJob(newJob);
+//                        break;
+//                    case 3:
+//                        System.out.print("Introduzca el nuevo ID del departamento: ");
+//                        int newDepId;
+//                        try {
+//                            newDepId = Integer.parseInt(scanner.nextLine());
+//                        } catch (NumberFormatException ex) {
+//                            System.out.println("Error: El ID del departamento debe ser un número entero.");
+//                            return null;
+//                        }
+//                        Department newDept = findDepartmentById(newDepId);
+//                        if (newDept == null) {
+//                            System.out.println("Departamento no encontrado.");
+//                            return null;
+//                        }
+//                        e.setDepartment(newDept);
+//                        break;
+//                    case 4:
+//                        System.out.print("Introduzca el nuevo nombre: ");
+//                        String allName = scanner.nextLine();
+//                        System.out.print("Introduzca el nuevo trabajo: ");
+//                        String allJob = scanner.nextLine();
+//                        System.out.print("Introduzca el nuevo ID del departamento: ");
+//                        int allDepId;
+//                        try {
+//                            allDepId = Integer.parseInt(scanner.nextLine());
+//                        } catch (NumberFormatException ex) {
+//                            System.out.println("Error: el ID del departamento debe ser un número entero.");
+//                            return null;
+//                        }
+//                        Department allDept = findDepartmentById(allDepId);
+//                        if (allDept == null) {
+//                            System.out.println("Departamento no encontrado.");
+//                            return null;
+//                        }
+//                        e.setName(allName);
+//                        e.setJob(allJob);
+//                        e.setDepartment(allDept);
+//                        break;
+//                    default:
+//                        System.out.println("Opción inválida.");
+//                        return null;
+//                }
+//                saveData();
+//                return e;
+//            }
+//        }
+//        return null;
+//    }
     @Override
     public Employee updateEmployee(Object id) {
-        if (!(id instanceof Employee employee)){
+        if (!(id instanceof Employee employee)) {
             return null;
         }
-        Scanner scanner = new Scanner(System.in);
         for (Employee e : employees) {
             if (e.getId() == employee.getId()) {
-                System.out.println("Seleccione el campo que desea actualizar para el empleado:");
-                System.out.println("1. Nombre");
-                System.out.println("2. Trabajo");
-                System.out.println("3. Departamento");
-                System.out.println("4. Todos los campos");
-                System.out.print("Opciones: ");
-                int option;
-                try {
-                    option = Integer.parseInt(scanner.nextLine());
-                } catch (NumberFormatException ex) {
-                    System.out.println("Error: La opción debe ser un número entero.");
-                    return null;
-                }
-
-                switch (option) {
-                    case 1:
-                        System.out.print("Introduzca el nuevo nombre: ");
-                        String newName = scanner.nextLine();
-                        e.setName(newName);
-                        break;
-                    case 2:
-                        System.out.print("Introduzca el nuevo trabajo: ");
-                        String newJob = scanner.nextLine();
-                        e.setJob(newJob);
-                        break;
-                    case 3:
-                        System.out.print("Introduzca el nuevo ID del departamento: ");
-                        int newDepId;
-                        try {
-                            newDepId = Integer.parseInt(scanner.nextLine());
-                        } catch (NumberFormatException ex) {
-                            System.out.println("Error: El ID del departamento debe ser un número entero.");
-                            return null;
-                        }
-                        Department newDept = findDepartmentById(newDepId);
-                        if (newDept == null) {
-                            System.out.println("Departamento no encontrado.");
-                            return null;
-                        }
-                        e.setDepartment(newDept);
-                        break;
-                    case 4:
-                        System.out.print("Introduzca el nuevo nombre: ");
-                        String allName = scanner.nextLine();
-                        System.out.print("Introduzca el nuevo trabajo: ");
-                        String allJob = scanner.nextLine();
-                        System.out.print("Introduzca el nuevo ID del departamento: ");
-                        int allDepId;
-                        try {
-                            allDepId = Integer.parseInt(scanner.nextLine());
-                        } catch (NumberFormatException ex) {
-                            System.out.println("Error: el ID del departamento debe ser un número entero.");
-                            return null;
-                        }
-                        Department allDept = findDepartmentById(allDepId);
-                        if (allDept == null) {
-                            System.out.println("Departamento no encontrado.");
-                            return null;
-                        }
-                        e.setName(allName);
-                        e.setJob(allJob);
-                        e.setDepartment(allDept);
-                        break;
-                    default:
-                        System.out.println("Opción inválida.");
-                        return null;
-                }
                 saveData();
-                return e;
             }
         }
-        return null;
+        return findEmployeeById(id);
     }
-
     /**
      * Deletes an employee.
      *

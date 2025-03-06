@@ -135,109 +135,35 @@ public class PostgreSQLDAO implements IDAO {
      */
 
     @Override
-    public Employee updateEmployee(Object id) {
-
-        if (!(id instanceof Employee employee)){
+    public Employee updateEmployee(Object employeeObject) {
+        if (!(employeeObject instanceof Employee employee)){
             return null;
         }
+//        // 1. Verificar en la base de datos si el empleado existe
+//        String sqlSelect = "SELECT empno, nombre, puesto, depno FROM empleado WHERE empno = ?";
+//        try (Connection conn = getConnection();
+//             PreparedStatement pstmtSelect = conn.prepareStatement(sqlSelect)) {
+//            pstmtSelect.setInt(1, employee.getId());
+//            try (ResultSet rs = pstmtSelect.executeQuery()) {
+//                if (rs.next()) {
+//                    // Si se encuentra el empleado, se instancia y se cargan sus datos
+//                    employee = new Employee();
+//                    employee.setId(rs.getInt("empno"));
+//                    employee.setName(rs.getString("nombre"));
+//                    employee.setJob(rs.getString("puesto"));
+//                    int depId = rs.getInt("depno");
+//                    Department dept = findDepartmentById(depId);
+//                    employee.setDepartment(dept);
+//                } else {
+//                    return null;
+//                }
+//            }
+//        } catch (SQLException ex) {
+//            ex.printStackTrace();
+//            return null;
+//        }
 
-        // 1. Verificar en la base de datos si el empleado existe
-        String sqlSelect = "SELECT empno, nombre, puesto, depno FROM empleado WHERE empno = ?";
-        try (Connection conn = getConnection();
-             PreparedStatement pstmtSelect = conn.prepareStatement(sqlSelect)) {
-
-            pstmtSelect.setInt(1, employee.getId());
-            try (ResultSet rs = pstmtSelect.executeQuery()) {
-                if (rs.next()) {
-                    // Si se encuentra el empleado, se instancia y se cargan sus datos
-                    employee = new Employee();
-                    employee.setId(rs.getInt("empno"));
-                    employee.setName(rs.getString("nombre"));
-                    employee.setJob(rs.getString("puesto"));
-                    int depId = rs.getInt("depno");
-                    Department dept = findDepartmentById(depId);
-                    employee.setDepartment(dept);
-                } else {
-                    return null;
-                }
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-
-        // 2. Solicitar al usuario qué campo desea actualizar
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Seleccione el campo que desea actualizar para el empleado:");
-        System.out.println("1. Nombre");
-        System.out.println("2. Trabajo");
-        System.out.println("3. Departamento");
-        System.out.println("4. Todos los campos");
-        System.out.print("Opciones: ");
-        int option;
-        try {
-            option = Integer.parseInt(scanner.nextLine());
-        } catch (NumberFormatException ex) {
-            System.out.println("Error: La opción debe ser un número entero.");
-            return null;
-        }
-
-        // 3. Actualizar el objeto employee según la opción elegida
-        switch (option) {
-            case 1:
-                System.out.print("Introduzca el nuevo nombre: ");
-                String newName = scanner.nextLine();
-                employee.setName(newName);
-                break;
-            case 2:
-                System.out.print("Introduzca el nuevo trabajo: ");
-                String newJob = scanner.nextLine();
-                employee.setJob(newJob);
-                break;
-            case 3:
-                System.out.print("Introduzca el nuevo ID del departamento: ");
-                int newDepId;
-                try {
-                    newDepId = Integer.parseInt(scanner.nextLine());
-                } catch (NumberFormatException ex) {
-                    System.out.println("Error: El ID del departamento debe ser un número entero.");
-                    return null;
-                }
-                Department newDept = findDepartmentById(newDepId);
-                if (newDept == null) {
-                    System.out.println("Departamento no encontrado.");
-                    return null;
-                }
-                employee.setDepartment(newDept);
-                break;
-            case 4:
-                System.out.print("Introduzca el nuevo nombre: ");
-                String allName = scanner.nextLine();
-                System.out.print("Introduzca el nuevo trabajo: ");
-                String allJob = scanner.nextLine();
-                System.out.print("Introduzca el nuevo ID del departamento: ");
-                int allDepId;
-                try {
-                    allDepId = Integer.parseInt(scanner.nextLine());
-                } catch (NumberFormatException ex) {
-                    System.out.println("Error: el ID del departamento debe ser un número entero.");
-                    return null;
-                }
-                Department allDept = findDepartmentById(allDepId);
-                if (allDept == null) {
-                    System.out.println("Departamento no encontrado.");
-                    return null;
-                }
-                employee.setName(allName);
-                employee.setJob(allJob);
-                employee.setDepartment(allDept);
-                break;
-            default:
-                System.out.println("Opción inválida.");
-                return null;
-        }
-
-        // 4. Actualizar la base de datos con los nuevos datos
+        // 2. Actualizar la base de datos con los nuevos datos
         String sqlUpdate = "UPDATE empleado SET nombre = ?, puesto = ?, depno = ? WHERE empno = ?";
         try (Connection conn = getConnection();
              PreparedStatement pstmtUpdate = conn.prepareStatement(sqlUpdate)) {
@@ -254,7 +180,6 @@ public class PostgreSQLDAO implements IDAO {
                 System.out.println("No se pudo actualizar el empleado.");
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
             return null;
         }
 

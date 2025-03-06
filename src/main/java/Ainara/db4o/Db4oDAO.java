@@ -9,6 +9,7 @@ import com.db4o.ObjectSet;
 import com.db4o.query.Predicate;
 
 import java.io.Closeable;
+import java.util.Comparator;
 import java.util.List;
 /**
  * This class implements the {@link IDAO} interface and provides database operations using Db4o.
@@ -95,6 +96,7 @@ public class Db4oDAO implements Closeable, IDAO {
      */
     @Override
     public void addEmployee(Employee employee) {
+        employee.setId(getLastEmployeeId() + 1);
         container.store(employee);
     }
 
@@ -242,5 +244,11 @@ public class Db4oDAO implements Closeable, IDAO {
             return false;
         }
         return true;
+    }
+
+    private int getLastEmployeeId() {
+        List<Employee> employees = findAllEmployees();
+        employees.sort(Comparator.comparingInt(Employee::getId));
+        return employees.getLast().getId();
     }
 }
