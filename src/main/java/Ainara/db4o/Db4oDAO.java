@@ -74,9 +74,9 @@ public class Db4oDAO implements Closeable, IDAO {
     }
 
     @Override
-    public boolean deleteEmployee(Object employeeObject) {
-        // todo se pasa por parámetro un objeto tipo Employee, nosotros pasamos int
-        if (!(employeeObject instanceof Employee employee)) {return false;}
+    public boolean deleteEmployee(Object id) {
+        Employee employee = findEmployeeById(id);
+        if (employee == null) {return false;}
         try {
             container.delete(employee);
         } catch (Exception e) {
@@ -133,9 +133,9 @@ public class Db4oDAO implements Closeable, IDAO {
     }
 
     @Override
-    public Department deleteDepartment(Object departmentObject) {
-        // todo pasamos int no Department
-        if (!(departmentObject instanceof Department department)) {return null;}
+    public Department deleteDepartment(Object id) {
+        Department department = findDepartmentById(id);
+        if (department == null) {return null;}
         try {
             container.delete(department);
         } catch (Exception e) {
