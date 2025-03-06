@@ -133,6 +133,7 @@ public class PostgreSQLDAO implements IDAO {
      * @param id the identifier of the employee to update.
      * @return the updated {@link Employee} object, or {@code null} if not found or if the update was canceled.
      */
+
     @Override
     public Employee updateEmployee(Object id) {
 
@@ -157,7 +158,6 @@ public class PostgreSQLDAO implements IDAO {
                     Department dept = findDepartmentById(depId);
                     employee.setDepartment(dept);
                 } else {
-
                     return null;
                 }
             }

@@ -129,7 +129,8 @@ public class Main {
     private void updateEmployee() {
         System.out.print("Ingrese ID del empleado a actualizar: ");
         int id = Utils.Ask.askForNumber();
-        Employee employee = dao.updateEmployee(id);
+        Employee employee = dao.findEmployeeById(id);
+        dao.updateEmployee(employee);
         if (employee == null) {
             System.err.println("El empleado con id " + id + " no existe.");
         }
